@@ -3,66 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Material Calculator</title>
+<title>Solar Material & Fastener Calculator</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 15px;
-        background: #f4f6f8;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    padding: 15px;
+}
 
-    h2 {
-        text-align: center;
-    }
+h2 {
+    text-align: center;
+}
 
-    button {
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        flex: 1;
-    }
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    flex: 1;
+}
 
-    .tabs, .subtabs {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
+.tabs, .subtabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
 
-    .active {
-        background-color: #007bff;
-        color: white;
-    }
+.active {
+    background: #007bff;
+    color: #fff;
+}
 
-    .inactive {
-        background-color: #e0e0e0;
-    }
+.inactive {
+    background: #ddd;
+}
 
-    .box {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-    }
+.box {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+}
 
-    input {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        margin: 10px 0;
-    }
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+}
 
-    .output div {
-        padding: 5px 0;
-        font-size: 15px;
-    }
+.output {
+    margin-top: 10px;
+    font-size: 15px;
+}
 
-    .hidden {
-        display: none;
-    }
-    .row {
+.hidden {
+    display: none;
+}
+
+.row {
     display: flex;
     gap: 10px;
 }
@@ -71,7 +69,7 @@
     flex: 1;
 }
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
     .row {
         flex-direction: column;
     }
@@ -81,158 +79,114 @@
 
 <body>
 
-<h2>Material Calculator</h2>
+<h2>Solar Fastener Calculator</h2>
 
 <div class="tabs">
-    <button id="fullBtn" class="active">Full Table</button>
-    <button id="halfBtn" class="inactive">Half Table</button>
+    <button onclick="showTable('full')" class="active" id="fullBtn">Full Table</button>
+    <button onclick="showTable('half')" class="inactive" id="halfBtn">Half Table</button>
 </div>
 
-<div id="fullTable" class="box">
+<!-- FULL TABLE -->
+<div id="fullBox" class="box">
     <div class="subtabs">
-        <button id="fullT2M" class="active">Table → Material</button>
-        <button id="fullM2T" class="inactive">Material → Table</button>
+        <button onclick="showSub('full','t2f')" class="active">Table → Fasteners</button>
+        <button onclick="showSub('full','f2t')" class="inactive">Fasteners → Table</button>
     </div>
 
-    <div id="fullTableToMaterial">
-        <input type="number" id="fullInput" placeholder="Enter number of tables">
-        <button class="active" onclick="calculateFull()">Calculate</button>
+    <div id="full_t2f">
+        <input type="number" id="fullTables" placeholder="Enter number of tables">
+        <button class="active" onclick="calcFasteners('full')">Calculate</button>
         <div id="fullResult" class="output"></div>
     </div>
 
- <div id="fullMaterialToTable" class="hidden">
-    <div class="row">
-        <div class="col">
-            <input type="number" id="fullMaterialInput" placeholder="Material quantity">
-            <select id="fullMaterialType">
-                <option value="12">Rafter / Front / Rear / Channel</option>
-                <option value="2">Cross Bracing</option>
-            </select>
-            <button class="active" onclick="fullMaterialToTable()">Calculate</button>
-        </div>
-
-        <div class="col output" id="fullMaterialResult">
-            <strong>Tables:</strong>
-        </div>
+    <div id="full_f2t" class="hidden">
+        <input type="number" id="fullFastQty" placeholder="Enter Bolt & Nut quantity">
+        <select id="fullFastType">
+            <option value="M8">M8</option>
+            <option value="M10">M10</option>
+            <option value="M12">M12</option>
+        </select>
+        <button class="active" onclick="calcTables('full')">Calculate</button>
+        <div id="fullTableResult" class="output"></div>
     </div>
 </div>
-</div>
 
-<div id="halfTable" class="box hidden">
+<!-- HALF TABLE -->
+<div id="halfBox" class="box hidden">
     <div class="subtabs">
-        <button id="halfT2M" class="active">Table → Material</button>
-        <button id="halfM2T" class="inactive">Material → Table</button>
+        <button onclick="showSub('half','t2f')" class="active">Table → Fasteners</button>
+        <button onclick="showSub('half','f2t')" class="inactive">Fasteners → Table</button>
     </div>
 
-    <div id="halfTableToMaterial">
-        <input type="number" id="halfInput" placeholder="Enter number of tables">
-        <button class="active" onclick="calculateHalf()">Calculate</button>
+    <div id="half_t2f">
+        <input type="number" id="halfTables" placeholder="Enter number of tables">
+        <button class="active" onclick="calcFasteners('half')">Calculate</button>
         <div id="halfResult" class="output"></div>
     </div>
 
-<div id="halfMaterialToTable" class="hidden">
-    <div class="row">
-        <div class="col">
-            <input type="number" id="halfMaterialInput" placeholder="Material quantity">
-            <select id="halfMaterialType">
-                <option value="7">Rafter / Front / Rear / Channel</option>
-                <option value="2">Cross Bracing</option>
-            </select>
-            <button class="active" onclick="halfMaterialToTable()">Calculate</button>
-        </div>
-
-        <div class="col output" id="halfMaterialResult">
-            <strong>Tables:</strong>
-        </div>
+    <div id="half_f2t" class="hidden">
+        <input type="number" id="halfFastQty" placeholder="Enter Bolt & Nut quantity">
+        <select id="halfFastType">
+            <option value="M8">M8</option>
+            <option value="M10">M10</option>
+            <option value="M12">M12</option>
+        </select>
+        <button class="active" onclick="calcTables('half')">Calculate</button>
+        <div id="halfTableResult" class="output"></div>
     </div>
-</div>
 </div>
 
 <script>
-/* ---------- TAB SWITCHING ---------- */
-const fullBtn = document.getElementById("fullBtn");
-const halfBtn = document.getElementById("halfBtn");
-const fullTable = document.getElementById("fullTable");
-const halfTable = document.getElementById("halfTable");
-
-fullBtn.onclick = () => {
-    fullTable.classList.remove("hidden");
-    halfTable.classList.add("hidden");
-    fullBtn.classList.add("active");
-    halfBtn.classList.remove("active");
+const data = {
+    full: {
+        M8: { bolt:232, pw:232, sw:232, rw:232 },
+        M10:{ bolt:324, pw:552, sw:324, rw:176 },
+        M12:{ bolt:24, pw:48, sw:24 }
+    },
+    half: {
+        M8: { bolt:116, pw:116, sw:116, rw:116 },
+        M10:{ bolt:176, pw:264, sw:176, rw:88 },
+        M12:{ bolt:14, pw:28, sw:14 }
+    }
 };
 
-halfBtn.onclick = () => {
-    halfTable.classList.remove("hidden");
-    fullTable.classList.add("hidden");
-    halfBtn.classList.add("active");
-    fullBtn.classList.remove("active");
-};
-
-/* ---------- SUB TABS ---------- */
-document.getElementById("fullT2M").onclick = () => {
-    document.getElementById("fullTableToMaterial").classList.remove("hidden");
-    document.getElementById("fullMaterialToTable").classList.add("hidden");
-};
-
-document.getElementById("fullM2T").onclick = () => {
-    document.getElementById("fullMaterialToTable").classList.remove("hidden");
-    document.getElementById("fullTableToMaterial").classList.add("hidden");
-};
-
-document.getElementById("halfT2M").onclick = () => {
-    document.getElementById("halfTableToMaterial").classList.remove("hidden");
-    document.getElementById("halfMaterialToTable").classList.add("hidden");
-};
-
-document.getElementById("halfM2T").onclick = () => {
-    document.getElementById("halfMaterialToTable").classList.remove("hidden");
-    document.getElementById("halfTableToMaterial").classList.add("hidden");
-};
-
-/* ---------- CALCULATIONS ---------- */
-function calculateFull() {
-    const n = Number(document.getElementById("fullInput").value);
-    if (!n) return;
-
-    document.getElementById("fullResult").innerHTML = `
-        <div>Rafter = ${n * 12}</div>
-        <div>Front Bracing = ${n * 12}</div>
-        <div>Rear Bracing = ${n * 12}</div>
-        <div>Connecting Channel = ${n * 12}</div>
-        <div>Cross Bracing = ${n * 2}</div>
-    `;
+function showTable(type){
+    fullBox.classList.toggle("hidden", type!=="full");
+    halfBox.classList.toggle("hidden", type!=="half");
+    fullBtn.classList.toggle("active", type==="full");
+    halfBtn.classList.toggle("active", type==="half");
 }
 
-function calculateHalf() {
-    const n = Number(document.getElementById("halfInput").value);
-    if (!n) return;
-
-    document.getElementById("halfResult").innerHTML = `
-        <div>Rafter = ${n * 7}</div>
-        <div>Front Bracing = ${n * 7}</div>
-        <div>Rear Bracing = ${n * 7}</div>
-        <div>Connecting Channel = ${n * 7}</div>
-        <div>Cross Bracing = ${n * 2}</div>
-    `;
+function showSub(type, mode){
+    document.getElementById(type+"_t2f").classList.toggle("hidden", mode!=="t2f");
+    document.getElementById(type+"_f2t").classList.toggle("hidden", mode!=="f2t");
 }
 
-function fullMaterialToTable() {
-    const qty = Number(document.getElementById("fullMaterialInput").value);
-    const divisor = Number(document.getElementById("fullMaterialType").value);
-    if (!qty) return;
+function calcFasteners(type){
+    const tables = Number(document.getElementById(type+"Tables").value);
+    if(!tables) return;
 
-    document.getElementById("fullMaterialResult").innerHTML =
-        `<strong>Tables:</strong> ${qty / divisor}`;
+    const d = data[type];
+    let out = "";
+    for(let k in d){
+        out += `<b>${k}</b><br>
+        Bolt & Nut: ${d[k].bolt * tables}<br>
+        P.W: ${d[k].pw * tables}<br>
+        S.W: ${d[k].sw * tables}<br>
+        ${d[k].rw ? "R.W: "+(d[k].rw * tables)+"<br>" : ""}
+        <hr>`;
+    }
+    document.getElementById(type+"Result").innerHTML = out;
 }
 
-function halfMaterialToTable() {
-    const qty = Number(document.getElementById("halfMaterialInput").value);
-    const divisor = Number(document.getElementById("halfMaterialType").value);
-    if (!qty) return;
+function calcTables(type){
+    const qty = Number(document.getElementById(type+"FastQty").value);
+    const m = document.getElementById(type+"FastType").value;
+    if(!qty) return;
 
-    document.getElementById("halfMaterialResult").innerHTML =
-        `<strong>Tables:</strong> ${qty / divisor}`;
+    const tables = qty / data[type][m].bolt;
+    document.getElementById(type+"TableResult").innerHTML =
+        `<b>Tables:</b> ${tables}`;
 }
 </script>
 
