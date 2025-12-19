@@ -149,22 +149,90 @@
 </div>
 
 <script>
+/* ---------- TAB SWITCHING ---------- */
+const fullBtn = document.getElementById("fullBtn");
+const halfBtn = document.getElementById("halfBtn");
+const fullTable = document.getElementById("fullTable");
+const halfTable = document.getElementById("halfTable");
+
+fullBtn.onclick = () => {
+    fullTable.classList.remove("hidden");
+    halfTable.classList.add("hidden");
+    fullBtn.classList.add("active");
+    halfBtn.classList.remove("active");
+};
+
+halfBtn.onclick = () => {
+    halfTable.classList.remove("hidden");
+    fullTable.classList.add("hidden");
+    halfBtn.classList.add("active");
+    fullBtn.classList.remove("active");
+};
+
+/* ---------- SUB TABS ---------- */
+document.getElementById("fullT2M").onclick = () => {
+    document.getElementById("fullTableToMaterial").classList.remove("hidden");
+    document.getElementById("fullMaterialToTable").classList.add("hidden");
+};
+
+document.getElementById("fullM2T").onclick = () => {
+    document.getElementById("fullMaterialToTable").classList.remove("hidden");
+    document.getElementById("fullTableToMaterial").classList.add("hidden");
+};
+
+document.getElementById("halfT2M").onclick = () => {
+    document.getElementById("halfTableToMaterial").classList.remove("hidden");
+    document.getElementById("halfMaterialToTable").classList.add("hidden");
+};
+
+document.getElementById("halfM2T").onclick = () => {
+    document.getElementById("halfMaterialToTable").classList.remove("hidden");
+    document.getElementById("halfTableToMaterial").classList.add("hidden");
+};
+
+/* ---------- CALCULATIONS ---------- */
+function calculateFull() {
+    const n = Number(document.getElementById("fullInput").value);
+    if (!n) return;
+
+    document.getElementById("fullResult").innerHTML = `
+        <div>Rafter = ${n * 12}</div>
+        <div>Front Bracing = ${n * 12}</div>
+        <div>Rear Bracing = ${n * 12}</div>
+        <div>Connecting Channel = ${n * 12}</div>
+        <div>Cross Bracing = ${n * 2}</div>
+    `;
+}
+
+function calculateHalf() {
+    const n = Number(document.getElementById("halfInput").value);
+    if (!n) return;
+
+    document.getElementById("halfResult").innerHTML = `
+        <div>Rafter = ${n * 7}</div>
+        <div>Front Bracing = ${n * 7}</div>
+        <div>Rear Bracing = ${n * 7}</div>
+        <div>Connecting Channel = ${n * 7}</div>
+        <div>Cross Bracing = ${n * 2}</div>
+    `;
+}
+
 function fullMaterialToTable() {
-    const qty = Number(fullMaterialInput.value);
-    const divisor = Number(fullMaterialType.value);
+    const qty = Number(document.getElementById("fullMaterialInput").value);
+    const divisor = Number(document.getElementById("fullMaterialType").value);
     if (!qty) return;
 
-    const tables = qty / divisor;
-    fullMaterialResult.innerHTML = `<strong>Tables:</strong> ${tables}`;
+    document.getElementById("fullMaterialResult").innerHTML =
+        `<strong>Tables:</strong> ${qty / divisor}`;
 }
 
 function halfMaterialToTable() {
-    const qty = Number(halfMaterialInput.value);
-    const divisor = Number(halfMaterialType.value);
+    const qty = Number(document.getElementById("halfMaterialInput").value);
+    const divisor = Number(document.getElementById("halfMaterialType").value);
     if (!qty) return;
 
-    const tables = qty / divisor;
-    halfMaterialResult.innerHTML = `<strong>Tables:</strong> ${tables}`;
+    document.getElementById("halfMaterialResult").innerHTML =
+        `<strong>Tables:</strong> ${qty / divisor}`;
 }
 </script>
 
