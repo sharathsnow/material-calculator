@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Material Calculator</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 15px;
+        background: #f4f6f8;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        flex: 1;
+    }
+
+    .tabs, .subtabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .inactive {
+        background-color: #e0e0e0;
+    }
+
+    .box {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    .output div {
+        padding: 5px 0;
+        font-size: 15px;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>Material Calculator</h2>
+
+<div class="tabs">
+    <button id="fullBtn" class="active">Full Table</button>
+    <button id="halfBtn" class="inactive">Half Table</button>
+</div>
+
+<div id="fullTable" class="box">
+    <div class="subtabs">
+        <button id="fullT2M" class="active">Table → Material</button>
+        <button id="fullM2T" class="inactive">Material → Table</button>
+    </div>
+
+    <div id="fullTableToMaterial">
+        <input type="number" id="fullInput" placeholder="Enter number of tables">
+        <button class="active" onclick="calculateFull()">Calculate</button>
+        <div id="fullResult" class="output"></div>
+    </div>
+
+    <div id="fullMaterialToTable" class="hidden">
+        <p>Material to Table logic can be added later</p>
+    </div>
+</div>
+
+<div id="halfTable" class="box hidden">
+    <div class="subtabs">
+        <button id="halfT2M" class="active">Table → Material</button>
+        <button id="halfM2T" class="inactive">Material → Table</button>
+    </div>
+
+    <div id="halfTableToMaterial">
+        <input type="number" id="halfInput" placeholder="Enter number of tables">
+        <button class="active" onclick="calculateHalf()">Calculate</button>
+        <div id="halfResult" class="output"></div>
+    </div>
+
+    <div id="halfMaterialToTable" class="hidden">
+        <p>Material to Table logic can be added later</p>
+    </div>
+</div>
+
+<script>
+fullBtn.onclick = () => {
+    fullBtn.className = "active";
+    halfBtn.className = "inactive";
+    fullTable.classList.remove("hidden");
+    halfTable.classList.add("hidden");
+};
+
+halfBtn.onclick = () => {
+    halfBtn.className = "active";
+    fullBtn.className = "inactive";
+    halfTable.classList.remove("hidden");
+    fullTable.classList.add("hidden");
+};
+
+fullT2M.onclick = () => {
+    fullT2M.className = "active";
+    fullM2T.className = "inactive";
+    fullTableToMaterial.classList.remove("hidden");
+    fullMaterialToTable.classList.add("hidden");
+};
+
+fullM2T.onclick = () => {
+    fullM2T.className = "active";
+    fullT2M.className = "inactive";
+    fullMaterialToTable.classList.remove("hidden");
+    fullTableToMaterial.classList.add("hidden");
+};
+
+halfT2M.onclick = () => {
+    halfT2M.className = "active";
+    halfM2T.className = "inactive";
+    halfTableToMaterial.classList.remove("hidden");
+    halfMaterialToTable.classList.add("hidden");
+};
+
+halfM2T.onclick = () => {
+    halfM2T.className = "active";
+    halfT2M.className = "inactive";
+    halfMaterialToTable.classList.remove("hidden");
+    halfTableToMaterial.classList.add("hidden");
+};
+
+function calculateFull() {
+    const n = Number(fullInput.value);
+    if (!n) return;
+
+    fullResult.innerHTML = `
+        <div>Rafter = ${n * 12}</div>
+        <div>Front Bracing = ${n * 12}</div>
+        <div>Rear Bracing = ${n * 12}</div>
+        <div>Connecting Channel = ${n * 12}</div>
+        <div>Cross Bracing = ${n * 2}</div>
+    `;
+}
+
+function calculateHalf() {
+    const n = Number(halfInput.value);
+    if (!n) return;
+
+    halfResult.innerHTML = `
+        <div>Rafter = ${n * 7}</div>
+        <div>Front Bracing = ${n * 7}</div>
+        <div>Rear Bracing = ${n * 7}</div>
+        <div>Connecting Channel = ${n * 7}</div>
+        <div>Cross Bracing = ${n * 2}</div>
+    `;
+}
+</script>
+
+</body>
+</html>
