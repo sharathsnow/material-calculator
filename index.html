@@ -62,6 +62,20 @@
     .hidden {
         display: none;
     }
+    .row {
+    display: flex;
+    gap: 10px;
+}
+
+.col {
+    flex: 1;
+}
+
+@media (max-width: 600px) {
+    .row {
+        flex-direction: column;
+    }
+}
 </style>
 </head>
 
@@ -86,9 +100,22 @@
         <div id="fullResult" class="output"></div>
     </div>
 
-    <div id="fullMaterialToTable" class="hidden">
-        <p>Material to Table logic can be added later</p>
+ <div id="fullMaterialToTable" class="hidden">
+    <div class="row">
+        <div class="col">
+            <input type="number" id="fullMaterialInput" placeholder="Material quantity">
+            <select id="fullMaterialType">
+                <option value="12">Rafter / Front / Rear / Channel</option>
+                <option value="2">Cross Bracing</option>
+            </select>
+            <button class="active" onclick="fullMaterialToTable()">Calculate</button>
+        </div>
+
+        <div class="col output" id="fullMaterialResult">
+            <strong>Tables:</strong>
+        </div>
     </div>
+</div>
 </div>
 
 <div id="halfTable" class="box hidden">
@@ -103,78 +130,41 @@
         <div id="halfResult" class="output"></div>
     </div>
 
-    <div id="halfMaterialToTable" class="hidden">
-        <p>Material to Table logic can be added later</p>
+<div id="halfMaterialToTable" class="hidden">
+    <div class="row">
+        <div class="col">
+            <input type="number" id="halfMaterialInput" placeholder="Material quantity">
+            <select id="halfMaterialType">
+                <option value="7">Rafter / Front / Rear / Channel</option>
+                <option value="2">Cross Bracing</option>
+            </select>
+            <button class="active" onclick="halfMaterialToTable()">Calculate</button>
+        </div>
+
+        <div class="col output" id="halfMaterialResult">
+            <strong>Tables:</strong>
+        </div>
     </div>
+</div>
 </div>
 
 <script>
-fullBtn.onclick = () => {
-    fullBtn.className = "active";
-    halfBtn.className = "inactive";
-    fullTable.classList.remove("hidden");
-    halfTable.classList.add("hidden");
-};
+function fullMaterialToTable() {
+    const qty = Number(fullMaterialInput.value);
+    const divisor = Number(fullMaterialType.value);
+    if (!qty) return;
 
-halfBtn.onclick = () => {
-    halfBtn.className = "active";
-    fullBtn.className = "inactive";
-    halfTable.classList.remove("hidden");
-    fullTable.classList.add("hidden");
-};
-
-fullT2M.onclick = () => {
-    fullT2M.className = "active";
-    fullM2T.className = "inactive";
-    fullTableToMaterial.classList.remove("hidden");
-    fullMaterialToTable.classList.add("hidden");
-};
-
-fullM2T.onclick = () => {
-    fullM2T.className = "active";
-    fullT2M.className = "inactive";
-    fullMaterialToTable.classList.remove("hidden");
-    fullTableToMaterial.classList.add("hidden");
-};
-
-halfT2M.onclick = () => {
-    halfT2M.className = "active";
-    halfM2T.className = "inactive";
-    halfTableToMaterial.classList.remove("hidden");
-    halfMaterialToTable.classList.add("hidden");
-};
-
-halfM2T.onclick = () => {
-    halfM2T.className = "active";
-    halfT2M.className = "inactive";
-    halfMaterialToTable.classList.remove("hidden");
-    halfTableToMaterial.classList.add("hidden");
-};
-
-function calculateFull() {
-    const n = Number(fullInput.value);
-    if (!n) return;
-
-    fullResult.innerHTML = `
-        <div>Rafter = ${n * 12}</div>
-        <div>Front Bracing = ${n * 12}</div>
-        <div>Rear Bracing = ${n * 12}</div>
-        <div>Connecting Channel = ${n * 12}</div>
-        <div>Cross Bracing = ${n * 2}</div>
-    `;
+    const tables = qty / divisor;
+    fullMaterialResult.innerHTML = `<strong>Tables:</strong> ${tables}`;
 }
 
-function calculateHalf() {
-    const n = Number(halfInput.value);
-    if (!n) return;
+function halfMaterialToTable() {
+    const qty = Number(halfMaterialInput.value);
+    const divisor = Number(halfMaterialType.value);
+    if (!qty) return;
 
-    halfResult.innerHTML = `
-        <div>Rafter = ${n * 7}</div>
-        <div>Front Bracing = ${n * 7}</div>
-        <div>Rear Bracing = ${n * 7}</div>
-        <div>Connecting Channel = ${n * 7}</div>
-        <div>Cross Bracing = ${n * 2}</div>
-    `;
+    const tables = qty / divisor;
+    halfMaterialResult.innerHTML = `<strong>Tables:</strong> ${tables}`;
 }
 </script>
 
