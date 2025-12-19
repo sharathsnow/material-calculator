@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Solar Calculator</title>
 
 <style>
-body { font-family: Arial; background:#f4f6f8; padding:15px; }
-h2 { text-align:center; }
-button { padding:10px; border:none; border-radius:6px; cursor:pointer; flex:1; }
-.tabs,.subtabs { display:flex; gap:10px; margin-bottom:15px; }
-.active { background:#007bff; color:#fff; }
-.inactive { background:#ddd; }
-.box { background:#fff; padding:15px; border-radius:8px; }
-input,select { width:100%; padding:10px; margin:8px 0; }
-.hidden { display:none; }
-.output { font-size:15px; margin-top:10px; }
+body{font-family:Arial;background:#f4f6f8;padding:15px}
+h2{text-align:center}
+button{padding:10px;border:none;border-radius:6px;flex:1}
+.tabs,.subtabs{display:flex;gap:10px;margin-bottom:12px}
+.active{background:#007bff;color:#fff}
+.inactive{background:#ddd}
+.box{background:#fff;padding:15px;border-radius:8px}
+input,select{width:100%;padding:10px;margin:8px 0}
+.hidden{display:none}
+.output{margin-top:10px;font-size:15px}
 </style>
 </head>
 
@@ -23,35 +23,32 @@ input,select { width:100%; padding:10px; margin:8px 0; }
 
 <h2>Solar Material & Fastener Calculator</h2>
 
-<!-- MAIN TABS -->
+<!-- MAIN -->
 <div class="tabs">
-    <button onclick="showMain('material')" class="active" id="matBtn">Material</button>
-    <button onclick="showMain('fastener')" class="inactive" id="fasBtn">Fasteners</button>
+<button class="active" onclick="showMain('material')">Material</button>
+<button onclick="showMain('fastener')">Fasteners</button>
 </div>
 
-<!-- ================= MATERIAL ================= -->
+<!-- MATERIAL -->
 <div id="materialBox" class="box">
-
 <div class="tabs">
-    <button onclick="showTable('full')" class="active" id="fullBtn">Full Table</button>
-    <button onclick="showTable('half')" class="inactive" id="halfBtn">Half Table</button>
+<button class="active" onclick="setTable('full')">Full Table</button>
+<button onclick="setTable('half')">Half Table</button>
 </div>
 
 <div class="subtabs">
-    <button onclick="showMatMode('t2m')" class="active">Table → Material</button>
-    <button onclick="showMatMode('m2t')" class="inactive">Material → Table</button>
+<button class="active" onclick="setMode('m_t2m')">Table → Material</button>
+<button onclick="setMode('m_m2t')">Material → Table</button>
 </div>
 
-<!-- TABLE TO MATERIAL -->
-<div id="t2m">
-<input type="number" id="tableCount" placeholder="Enter No. of Tables">
+<div id="m_t2m">
+<input id="matTables" type="number" placeholder="No. of Tables">
 <button class="active" onclick="calcMaterial()">Calculate</button>
-<div id="materialResult" class="output"></div>
+<div id="matResult" class="output"></div>
 </div>
 
-<!-- MATERIAL TO TABLE -->
-<div id="m2t" class="hidden">
-<select id="materialType">
+<div id="m_m2t" class="hidden">
+<select id="matType">
 <option value="post">Column Post</option>
 <option value="rafter">Rafter</option>
 <option value="front">Front Bracing</option>
@@ -59,67 +56,102 @@ input,select { width:100%; padding:10px; margin:8px 0; }
 <option value="channel">Connecting Channel</option>
 <option value="cross">Cross Bracing</option>
 </select>
-<input type="number" id="materialQty" placeholder="Enter Material Quantity">
+<input id="matQty" type="number" placeholder="Material Quantity">
 <button class="active" onclick="materialToTable()">Calculate</button>
-<div id="tableResult" class="output"></div>
+<div id="matTableResult" class="output"></div>
+</div>
 </div>
 
-</div>
-
-<!-- ================= FASTENERS (EXISTING) ================= -->
+<!-- FASTENERS -->
 <div id="fastenerBox" class="box hidden">
-<b>Fasteners section already implemented ✔</b>
+
+<div class="tabs">
+<button class="active" onclick="setTable('full')">Full Table</button>
+<button onclick="setTable('half')">Half Table</button>
+</div>
+
+<div class="subtabs">
+<button class="active" onclick="setMode('f_t2t')">Table → Fasteners</button>
+<button onclick="setMode('f_f2t')">Fasteners → Table</button>
+</div>
+
+<div id="f_t2t">
+<input id="fasTables" type="number" placeholder="No. of Tables">
+<button class="active" onclick="calcFasteners()">Calculate</button>
+<div id="fasResult" class="output"></div>
+</div>
+
+<div id="f_f2t" class="hidden">
+<select id="fasType">
+<option value="m10bn">M10 Bolt & Nut</option>
+<option value="m10pw">M10 P.W</option>
+<option value="m10sw">M10 S.W</option>
+<option value="m10rw">M10 R.W</option>
+<option value="m12bn">M12 Bolt & Nut</option>
+<option value="m12pw">M12 P.W</option>
+<option value="m12sw">M12 S.W</option>
+<option value="m8bn">M8 Bolt & Nut</option>
+<option value="m8rw">M8 R.W</option>
+</select>
+<input id="fasQty" type="number" placeholder="Fastener Quantity">
+<button class="active" onclick="fastenerToTable()">Calculate</button>
+<div id="fasTableResult" class="output"></div>
+</div>
+
 </div>
 
 <script>
-let tableType = "full";
+let tableType="full";
 
-const materialData = {
-full:{ post:12, rafter:12, front:12, rear:12, channel:12, cross:2 },
-half:{ post:7, rafter:7, front:7, rear:7, channel:7, cross:2 }
+const material={
+full:{post:12,rafter:12,front:12,rear:12,channel:12,cross:2},
+half:{post:7,rafter:7,front:7,rear:7,channel:7,cross:2}
 };
 
-function showMain(type){
-materialBox.classList.toggle("hidden", type!=="material");
-fastenerBox.classList.toggle("hidden", type!=="fastener");
-matBtn.classList.toggle("active", type==="material");
-fasBtn.classList.toggle("active", type==="fastener");
+const fastener={
+full:{m10bn:324,m10pw:472,m10sw:324,m10rw:176,m12bn:24,m12pw:48,m12sw:24,m8bn:232,m8rw:232},
+half:{m10bn:176,m10pw:264,m10sw:176,m10rw:88,m12bn:14,m12pw:28,m12sw:14,m8bn:116,m8rw:116}
+};
+
+function showMain(x){
+materialBox.classList.toggle("hidden",x!=="material");
+fastenerBox.classList.toggle("hidden",x!=="fastener");
 }
 
-function showTable(type){
-tableType = type;
-fullBtn.classList.toggle("active", type==="full");
-halfBtn.classList.toggle("active", type==="half");
-}
+function setTable(t){tableType=t}
 
-function showMatMode(mode){
-t2m.classList.toggle("hidden", mode!=="t2m");
-m2t.classList.toggle("hidden", mode!=="m2t");
+function setMode(id){
+["m_t2m","m_m2t","f_t2t","f_f2t"].forEach(x=>{
+let e=document.getElementById(x);
+if(e) e.classList.toggle("hidden",x!==id);
+});
 }
 
 function calcMaterial(){
-const n = Number(tableCount.value);
-if(!n) return;
-const d = materialData[tableType];
-materialResult.innerHTML = `
-Column Post : ${d.post*n}<br>
-Rafter : ${d.rafter*n}<br>
-Front Bracing : ${d.front*n}<br>
-Rear Bracing : ${d.rear*n}<br>
-Connecting Channel : ${d.channel*n}<br>
-Cross Bracing : ${d.cross*n}
-`;
+let n=matTables.value;
+let d=material[tableType];
+matResult.innerHTML=
+`Post:${d.post*n}<br>Rafter:${d.rafter*n}<br>Front:${d.front*n}<br>Rear:${d.rear*n}<br>Channel:${d.channel*n}<br>Cross:${d.cross*n}`;
 }
 
 function materialToTable(){
-const qty = Number(materialQty.value);
-const mat = materialType.value;
-if(!qty) return;
-const tables = qty / materialData[tableType][mat];
-tableResult.innerHTML = `<b>Tables:</b> ${tables}`;
+let t=matType.value;
+matTableResult.innerHTML="Tables: "+(matQty.value/material[tableType][t]);
+}
+
+function calcFasteners(){
+let n=fasTables.value;
+let d=fastener[tableType];
+let out="";
+for(let k in d){out+=`${k.toUpperCase()} : ${d[k]*n}<br>`}
+fasResult.innerHTML=out;
+}
+
+function fastenerToTable(){
+let t=fasType.value;
+fasTableResult.innerHTML="Tables: "+(fasQty.value/fastener[tableType][t]);
 }
 </script>
 
 </body>
-</html>
 </html>
