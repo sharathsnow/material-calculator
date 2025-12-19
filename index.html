@@ -23,7 +23,7 @@ input,select{width:100%;padding:10px;margin:8px 0}
 
 <h2>Solar Material & Fastener Calculator</h2>
 
-<!-- MAIN -->
+<!-- MAIN TABS -->
 <div class="tabs">
 <button class="active" onclick="showMain('material')">Material</button>
 <button onclick="showMain('fastener')">Fasteners</button>
@@ -31,6 +31,7 @@ input,select{width:100%;padding:10px;margin:8px 0}
 
 <!-- MATERIAL -->
 <div id="materialBox" class="box">
+
 <div class="tabs">
 <button class="active" onclick="setTable('full')">Full Table</button>
 <button onclick="setTable('half')">Half Table</button>
@@ -41,25 +42,21 @@ input,select{width:100%;padding:10px;margin:8px 0}
 <button onclick="setMode('m_m2t')">Material → Table</button>
 </div>
 
+<!-- TABLE TO MATERIAL -->
 <div id="m_t2m">
 <input id="matTables" type="number" placeholder="No. of Tables">
 <button class="active" onclick="calcMaterial()">Calculate</button>
 <div id="matResult" class="output"></div>
 </div>
 
+<!-- MATERIAL TO TABLE -->
 <div id="m_m2t" class="hidden">
-<select id="matType">
-<option value="post">Column Post</option>
-<option value="rafter">Rafter</option>
-<option value="front">Front Bracing</option>
-<option value="rear">Rear Bracing</option>
-<option value="channel">Connecting Channel</option>
-<option value="cross">Cross Bracing</option>
-</select>
+<select id="matType"></select>
 <input id="matQty" type="number" placeholder="Material Quantity">
 <button class="active" onclick="materialToTable()">Calculate</button>
 <div id="matTableResult" class="output"></div>
 </div>
+
 </div>
 
 <!-- FASTENERS -->
@@ -104,8 +101,24 @@ input,select{width:100%;padding:10px;margin:8px 0}
 let tableType="full";
 
 const material={
-full:{post:12,rafter:12,front:12,rear:12,channel:12,cross:2},
-half:{post:7,rafter:7,front:7,rear:7,channel:7,cross:2}
+full:{
+post:12,rafter:12,
+p1:4,p2:4,p3:4,p4:4,p5:4,p6:4,
+front:12,rear:12,channel:12,cross:2
+},
+half:{
+post:7,rafter:7,
+p7:4,p8:4,p9:4,
+front:7,rear:7,channel:7,cross:2
+}
+};
+
+const labels={
+post:"Column Post",rafter:"Rafter",
+p1:"Purlin 1",p2:"Purlin 2",p3:"Purlin 3",p4:"Purlin 4",p5:"Purlin 5",p6:"Purlin 6",
+p7:"Purlin 7",p8:"Purlin 8",p9:"Purlin 9",
+front:"Front Bracing",rear:"Rear Bracing",
+channel:"Connecting Channel",cross:"Cross Bracing"
 };
 
 const fastener={
@@ -118,7 +131,10 @@ materialBox.classList.toggle("hidden",x!=="material");
 fastenerBox.classList.toggle("hidden",x!=="fastener");
 }
 
-function setTable(t){tableType=t}
+function setTable(t){
+tableType=t;
+loadMaterialSelect();
+}
 
 function setMode(id){
 ["m_t2m","m_m2t","f_t2t","f_f2t"].forEach(x=>{
@@ -127,16 +143,26 @@ if(e) e.classList.toggle("hidden",x!==id);
 });
 }
 
+function loadMaterialSelect(){
+matType.innerHTML="";
+for(let k in material[tableType]){
+matType.innerHTML+=`<option value="${k}">${labels[k]}</option>`;
+}
+}
+
+loadMaterialSelect();
+
 function calcMaterial(){
-let n=matTables.value;
+let n=Number(matTables.value);
 let d=material[tableType];
-matResult.innerHTML=
-`Post:${d.post*n}<br>Rafter:${d.rafter*n}<br>Front:${d.front*n}<br>Rear:${d.rear*n}<br>Channel:${d.channel*n}<br>Cross:${d.cross*n}`;
+let out="";
+for(let k in d){out+=`${labels[k]} : ${d[k]*n}<br>`}
+matResult.innerHTML=out;
 }
 
 function materialToTable(){
-let t=matType.value;
-matTableResult.innerHTML="Tables: "+(matQty.value/material[tableType][t]);
+let k=matType.value;
+matTableResult.innerHTML="Tables : "+(matQty.value/material[tableType][k]);
 }
 
 function calcFasteners(){
@@ -149,7 +175,7 @@ fasResult.innerHTML=out;
 
 function fastenerToTable(){
 let t=fasType.value;
-fasTableResult.innerHTML="Tables: "+(fasQty.value/fastener[tableType][t]);
+fasTableResult.innerHTML="Tables : "+(fasQty.value/fastener[tableType][t]);
 }
 </script>
 
