@@ -24,6 +24,46 @@ body{
 .header img{height:40px}
 .header h1{font-size:16px;margin:0}
 
+/* INFO ICON */
+.info-icon{
+  position:fixed;
+  top:12px;
+  right:12px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#fff;
+  color:#111;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:2000;
+  box-shadow:0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* INFO POPUP */
+.info-box{
+  position:fixed;
+  top:50px;
+  right:12px;
+  background:#fff;
+  padding:14px;
+  width:260px;
+  border-radius:10px;
+  font-size:13px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.35);
+  z-index:2000;
+  opacity:0;
+  transform:translateY(-10px);
+  transition:0.25s ease;
+}
+.info-box.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
 /* LAYOUT */
 .container{
   display:flex;
@@ -68,19 +108,46 @@ input,select{width:100%;padding:10px;margin:8px 0}
 .hidden{display:none}
 .output{margin-top:10px;font-size:15px}
 
-/* MOBILE */
+/* FOOTER */
+.footer{
+  text-align:center;
+  font-size:12px;
+  color:#666;
+  padding:12px 5px;
+}
+
+/* MOBILE FIX */
 @media(max-width:768px){
   .container{flex-direction:column}
-  .sidebar{width:100%;display:flex;gap:10px}
+  .sidebar{
+    width:100%;
+    display:flex;
+    gap:10px;
+  }
+  .sidebar button{
+    flex:1;
+    margin-bottom:0;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- INFO ICON -->
+<div class="info-icon" onclick="toggleInfo()">ⓘ</div>
+
+<div id="infoBox" class="info-box">
+<b>Solar Calculator</b><br><br>
+Internal utility tool for site engineering calculations.<br>
+Not an official application.<br><br>
+<b>Version:</b> v1.0<br>
+<b>Developed by:</b> Sharath Chandra
+</div>
+
 <!-- HEADER -->
 <div class="header">
-  <img src="IMG_4454.jpeg" alt="Amararaja Logo">
+  <img src="IMG_4454.jpeg">
   <h1>Amararaja Solar Infra (Nagalooty)</h1>
 </div>
 
@@ -96,9 +163,8 @@ input,select{width:100%;padding:10px;margin:8px 0}
 <!-- CONTENT -->
 <div class="content">
 
-<!-- ================= MMS ================= -->
+<!-- MMS -->
 <div id="mmsBox" class="box">
-
 <div class="tabs">
 <button class="active" onclick="setTable(this,'full')">Full Table</button>
 <button onclick="setTable(this,'half')">Half Table</button>
@@ -146,12 +212,10 @@ input,select{width:100%;padding:10px;margin:8px 0}
 <button class="active" onclick="fastenerToTable()">Calculate</button>
 <div id="fasTableResult" class="output"></div>
 </div>
-
 </div>
 
-<!-- ================= PILING ================= -->
+<!-- PILING -->
 <div id="pilingBox" class="box hidden">
-
 <div class="tabs">
 <button class="active" onclick="setPileTable(this,'full')">Full Table</button>
 <button onclick="setPileTable(this,'half')">Half Table</button>
@@ -173,15 +237,17 @@ input,select{width:100%;padding:10px;margin:8px 0}
 <button class="active" onclick="postToTable()">Calculate</button>
 <div id="pileTableResult" class="output"></div>
 </div>
-
 </div>
 
-<!-- ================= MODULE ================= -->
 <div id="moduleBox" class="box hidden">
 <p>Module calculations can be added here.</p>
 </div>
 
 </div>
+</div>
+
+<div class="footer">
+Internal utility tool • Developed by Sharath Chandra
 </div>
 
 <script>
@@ -208,79 +274,15 @@ half:{m10bn:176,m10pw:264,m10sw:176,m10rw:88,m12bn:14,m12pw:28,m12sw:14,m8bn:116
 
 const columnPost={full:12,half:7};
 
-function activate(btn){
-btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
+function toggleInfo(){
+  infoBox.classList.toggle("show");
 }
 
-function showMain(btn,x){
-document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-mmsBox.classList.toggle("hidden",x!=="mms");
-pilingBox.classList.toggle("hidden",x!=="piling");
-moduleBox.classList.toggle("hidden",x!=="module");
-}
-
-function setTable(btn,t){
-activate(btn);
-tableType=t;
-loadMaterialSelect();
-}
-
-function setPileTable(btn,t){
-activate(btn);
-pileTableType=t;
-}
-
-function setMode(btn,id){
-activate(btn);
-["m_t2m","m_m2t","f_t2t","f_f2t","p_t2p","p_p2t"].forEach(x=>{
-let e=document.getElementById(x);
-if(e) e.classList.toggle("hidden",x!==id);
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".info-box") && !e.target.closest(".info-icon")){
+    infoBox.classList.remove("show");
+  }
 });
-}
-
-function loadMaterialSelect(){
-matType.innerHTML="";
-for(let k in material[tableType]){
-matType.innerHTML+=`<option value="${k}">${labels[k]}</option>`;
-}
-}
-loadMaterialSelect();
-
-function calcMaterial(){
-let n=matTables.value;
-let out="";
-for(let k in material[tableType]){
-out+=`${labels[k]} : ${material[tableType][k]*n}<br>`;
-}
-matResult.innerHTML=out;
-}
-
-function materialToTable(){
-matTableResult.innerHTML="Tables : "+(matQty.value/material[tableType][matType.value]).toFixed(2);
-}
-
-function calcFasteners(){
-let n=fasTables.value;
-let out="";
-for(let k in fastener[tableType]){
-out+=`${k.toUpperCase()} : ${fastener[tableType][k]*n}<br>`;
-}
-fasResult.innerHTML=out;
-}
-
-function fastenerToTable(){
-fasTableResult.innerHTML="Tables : "+(fasQty.value/fastener[tableType][fasType.value]).toFixed(2);
-}
-
-function tableToPost(){
-pileResult.innerHTML="Column Posts : "+(pileTables.value*columnPost[pileTableType]);
-}
-
-function postToTable(){
-pileTableResult.innerHTML="Tables : "+(pileQty.value/columnPost[pileTableType]).toFixed(2);
-}
 </script>
 
 </body>
