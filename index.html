@@ -4,185 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Solar Calculator</title>
-
 <style>
-body{
-  font-family:Arial;
-  background:#f4f6f8;
-  margin:0;
-}
-
-/* HEADER */
-.header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background:#111;
-  color:#fff;
-  padding:12px 15px;
-}
-.header img{height:40px}
-.header h1{font-size:16px;margin:0}
-
-/* INFO ICON */
-.info-icon{
-  position:fixed;
-  top:12px;
-  right:12px;
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  background:#fff;
-  color:#111;
-  font-weight:bold;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  z-index:2000;
-  box-shadow:0 2px 6px rgba(0,0,0,0.4);
-}
-
-/* INFO POPUP */
-.info-box{
-  position:fixed;
-  top:50px;
-  right:12px;
-  background:#fff;
-  padding:14px;
-  width:260px;
-  border-radius:10px;
-  font-size:13px;
-  box-shadow:0 6px 16px rgba(0,0,0,0.35);
-  z-index:2000;
-  opacity:0;
-  transform:translateY(-10px);
-  transition:0.25s ease;
-}
-.info-box.show{
-  opacity:1;
-  transform:translateY(0);
-}
-
-/* LAYOUT */
-.container{
-  display:flex;
-  min-height:calc(100vh - 64px);
-}
-
-/* SIDEBAR */
-.sidebar{
-  position:relative;
-  width:160px;
-  background:#222;
-  display:flex;
-  flex-direction:column;
-  padding:0;
-}
-.sidebar button{
-  width:100%;
-  padding:12px 15px;
-  border:none;
-  background:#222;
-  color:#fff;
-  text-align:left;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.3s;
-}
-.sidebar button:hover{
-  background:#333;
-}
-.sidebar button.active{
-  background:#007bff;
-  color:#fff;
-}
-
-/* CONTENT */
-.content{
-  flex:1;
-  padding:15px;
-}
-
-/* TABS & SUBTABS */
-.tabs, .subtabs{
-  display:flex;
-  gap:10px;
-  margin-bottom:12px;
-  flex-wrap:wrap;
-}
-button.tab{
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
-button.tab.active{
-  background:#007bff;
-  color:#fff;
-}
-
+body{font-family:Arial;background:#f4f6f8;margin:0;}
+.header{display:flex;align-items:center;gap:12px;background:#111;color:#fff;padding:12px 15px;}
+.header img{height:40px} .header h1{font-size:16px;margin:0;}
+.info-icon{position:fixed;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:#fff;color:#111;font-weight:bold;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2000;box-shadow:0 2px 6px rgba(0,0,0,0.4);}
+.info-box{position:fixed;top:50px;right:12px;background:#fff;padding:14px;width:260px;border-radius:10px;font-size:13px;box-shadow:0 6px 16px rgba(0,0,0,0.35);z-index:2000;opacity:0;transform:translateY(-10px);transition:0.25s ease;}
+.info-box.show{opacity:1;transform:translateY(0);}
+.container{display:flex;min-height:calc(100vh - 64px);}
+.sidebar{position:relative;width:160px;background:#222;display:flex;flex-direction:column;padding:0;}
+.sidebar button{width:100%;padding:12px 15px;border:none;background:#222;color:#fff;text-align:left;font-weight:bold;cursor:pointer;transition:0.3s;}
+.sidebar button:hover{background:#333;}
+.sidebar button.active{background:#007bff;color:#fff;}
+.content{flex:1;padding:15px;}
+.tabs,.subtabs{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+button.tab{padding:10px;border:none;border-radius:6px;cursor:pointer;}
+button.tab.active{background:#007bff;color:#fff;}
 .box{background:#fff;padding:15px;border-radius:8px;}
 input,select{width:100%;padding:10px;margin:8px 0;}
 .hidden{display:none;}
 .output{margin-top:10px;font-size:15px;}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  font-size:12px;
-  color:#666;
-  padding:12px 5px;
-}
-
-/* MOBILE FIX */
-@media(max-width:768px){
-  .container{flex-direction:column}
-  .sidebar{
-    width:100%;
-    flex-direction:row;
-  }
-  .sidebar button{
-    flex:1;
-    text-align:center;
-  }
-}
+.footer{text-align:center;font-size:12px;color:#666;padding:12px 5px;}
+@media(max-width:768px){.container{flex-direction:column}.sidebar{width:100%;flex-direction:row;}.sidebar button{flex:1;text-align:center;}}
 </style>
 </head>
-
 <body>
 
-<!-- INFO ICON -->
 <div class="info-icon" onclick="toggleInfo()">ⓘ</div>
-<div id="infoBox" class="info-box">
-<b>Solar Calculator</b><br><br>
-Internal utility tool for site engineering calculations.<br>
-Not an official application.<br><br>
-<b>Version:</b> v1.0<br>
-<b>Developed by:</b> Sharath Chandra
-</div>
+<div id="infoBox" class="info-box"><b>Solar Calculator</b><br><br>Internal utility tool for site engineering calculations.<br>Not an official application.<br><br><b>Version:</b> v1.0<br><b>Developed by:</b> Sharath Chandra</div>
 
-<!-- HEADER -->
 <div class="header">
   <img src="IMG_4454.jpeg">
   <h1>Amararaja Solar Infra (Nagalooty)</h1>
 </div>
 
 <div class="container">
-  <!-- SIDEBAR -->
   <div class="sidebar">
     <button class="active" onclick="showSection('mmsBox', this)">MMS</button>
     <button onclick="showSection('pilingBox', this)">Piling</button>
     <button onclick="showSection('moduleBox', this)">Module</button>
   </div>
 
-  <!-- CONTENT -->
   <div class="content">
     <!-- MMS -->
     <div id="mmsBox" class="box">
       <div class="tabs">
-        <button class="tab active" onclick="setTable('full', this)">Full Table</button>
-        <button class="tab" onclick="setTable('half', this)">Half Table</button>
+        <button class="tab active" onclick="setTable('full', this, 'mms')">Full Table</button>
+        <button class="tab" onclick="setTable('half', this, 'mms')">Half Table</button>
       </div>
       <div class="subtabs">
         <button class="tab active" onclick="showSubTab('m_t2m', this)">Table → Material</button>
@@ -227,8 +95,8 @@ Not an official application.<br><br>
     <!-- PILING -->
     <div id="pilingBox" class="box hidden">
       <div class="tabs">
-        <button class="tab active" onclick="setPileTable('full', this)">Full Table</button>
-        <button class="tab" onclick="setPileTable('half', this)">Half Table</button>
+        <button class="tab active" onclick="setTable('full', this, 'piling')">Full Table</button>
+        <button class="tab" onclick="setTable('half', this, 'piling')">Half Table</button>
       </div>
       <div class="subtabs">
         <button class="tab active" onclick="showSubTab('p_t2p', this)">Table → Column Post</button>
@@ -250,76 +118,45 @@ Not an official application.<br><br>
     <div id="moduleBox" class="box hidden">
       <p>Module calculations can be added here.</p>
     </div>
-
   </div>
 </div>
 
-<div class="footer">
-Internal utility tool • Developed by Sharath Chandra
-</div>
+<div class="footer">Internal utility tool • Developed by Sharath Chandra</div>
 
 <script>
-// =====================
-// GLOBAL VARIABLES
-// =====================
-let tableType = "full";
-let pileTableType = "full";
+// ===== Info Icon =====
+function toggleInfo(){document.getElementById("infoBox").classList.toggle("show");}
+document.addEventListener("click", e=>{if(!e.target.closest(".info-box")&&!e.target.closest(".info-icon")){document.getElementById("infoBox").classList.remove("show");}});
 
-// =====================
-// INFO ICON
-// =====================
-function toggleInfo() {
-  document.getElementById("infoBox").classList.toggle("show");
-}
-document.addEventListener("click", e=>{
-  if(!e.target.closest(".info-box") && !e.target.closest(".info-icon")){
-    document.getElementById("infoBox").classList.remove("show");
-  }
-});
-
-// =====================
-// SHOW SIDEBAR SECTION
-// =====================
-function showSection(id, btn){
+// ===== Sidebar Sections =====
+function showSection(id,btn){
   document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.box').forEach(b=>b.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
 }
 
-// =====================
-// SUBTABS
-// =====================
+// ===== Sub Tabs =====
 function showSubTab(id, btn){
-  const parent = btn.closest(".box");
+  const parent=btn.closest(".box");
   parent.querySelectorAll(".subtabs button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   parent.querySelectorAll("> div").forEach(d=>{
-    if(!d.classList.contains("tabs") && !d.classList.contains("subtabs")){
-      d.classList.add("hidden");
-    }
+    if(!d.classList.contains("tabs")&&!d.classList.contains("subtabs")) d.classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
 }
 
-// =====================
-// MMS/PILING TABLE SWITCH
-// =====================
-function setTable(type, btn){
-  tableType = type;
+// ===== Table Tabs =====
+let tableType='full', pileTableType='full';
+function setTable(type, btn, section){
+  if(section==='mms') tableType=type; else pileTableType=type;
   btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  populateMaterialDropdown();
-}
-function setPileTable(type, btn){
-  pileTableType = type;
-  btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  if(section==='mms') populateMaterialDropdown();
 }
 
-// =====================
-// MATERIAL DROPDOWN
-// =====================
+// ===== Material & Fasteners =====
 const material={full:{rafter:12,p1:4,p2:4,p3:4,p4:4,p5:4,p6:4,front:12,rear:12,channel:12,cross:2},half:{rafter:7,p7:4,p8:4,p9:4,front:7,rear:7,channel:7,cross:2}};
 const labels={rafter:"Rafter",p1:"Purlin 1",p2:"Purlin 2",p3:"Purlin 3",p4:"Purlin 4",p5:"Purlin 5",p6:"Purlin 6",p7:"Purlin 7",p8:"Purlin 8",p9:"Purlin 9",front:"Front Bracing",rear:"Rear Bracing",channel:"Connecting Channel",cross:"Cross Bracing"};
 const fastener={full:{m10bn:324,m10pw:472,m10sw:324,m10rw:176,m12bn:24,m12pw:48,m12sw:24,m8bn:232,m8rw:232},half:{m10bn:176,m10pw:264,m10sw:176,m10rw:88,m12bn:14,m12pw:28,m12sw:14,m8bn:116,m8rw:116}};
@@ -330,55 +167,18 @@ function populateMaterialDropdown(){
   matType.innerHTML="";
   Object.keys(material[tableType]).forEach(k=>{
     const opt=document.createElement("option");
-    opt.value=k;
-    opt.textContent=labels[k];
-    matType.appendChild(opt);
+    opt.value=k; opt.textContent=labels[k]; matType.appendChild(opt);
   });
 }
-populateMaterialDropdown();
 
-// =====================
-// CALCULATIONS
-// =====================
-function calcMaterial(){
-  const t=Number(document.getElementById("matTables").value);
-  if(!t) return alert("Enter number of tables");
-  let out="";
-  for(const k in material[tableType]) out+=`${labels[k]}: ${material[tableType][k]*t}<br>`;
-  document.getElementById("matResult").innerHTML=out;
-}
-function materialToTable(){
-  const type=document.getElementById("matType").value;
-  const qty=Number(document.getElementById("matQty").value);
-  if(!qty) return alert("Enter material quantity");
-  const t=Math.floor(qty/material[tableType][type]);
-  document.getElementById("matTableResult").innerHTML=`Tables possible: ${t}`;
-}
-function calcFasteners(){
-  const t=Number(document.getElementById("fasTables").value);
-  if(!t) return alert("Enter number of tables");
-  let out="";
-  for(const k in fastener[tableType]) out+=`${k.toUpperCase()}: ${fastener[tableType][k]*t}<br>`;
-  document.getElementById("fasResult").innerHTML=out;
-}
-function fastenerToTable(){
-  const type=document.getElementById("fasType").value;
-  const qty=Number(document.getElementById("fasQty").value);
-  if(!qty) return alert("Enter fastener quantity");
-  const t=Math.floor(qty/fastener[tableType][type]);
-  document.getElementById("fasTableResult").innerHTML=`Tables possible: ${t}`;
-}
-function tableToPost(){
-  const t=Number(document.getElementById("pileTables").value);
-  if(!t) return alert("Enter number of tables");
-  document.getElementById("pileResult").innerHTML=`Column Posts Required: ${t*columnPost[pileTableType]}`;
-}
-function postToTable(){
-  const qty=Number(document.getElementById("pileQty").value);
-  if(!qty) return alert("Enter number of column posts");
-  document.getElementById("pileTableResult").innerHTML=`Tables possible: ${Math.floor(qty/columnPost[pileTableType])}`;
-}
+function calcMaterial(){const t=Number(document.getElementById("matTables").value);if(!t)return alert("Enter number of tables");let out="";for(const k in material[tableType]) out+=`${labels[k]}: ${material[tableType][k]*t}<br>`;document.getElementById("matResult").innerHTML=out;}
+function materialToTable(){const type=document.getElementById("matType").value;const qty=Number(document.getElementById("matQty").value);if(!qty)return alert("Enter material quantity");const t=Math.floor(qty/material[tableType][type]);document.getElementById("matTableResult").innerHTML=`Tables possible: ${t}`;}
+function calcFasteners(){const t=Number(document.getElementById("fasTables").value);if(!t)return alert("Enter number of tables");let out="";for(const k in fastener[tableType]) out+=`${k.toUpperCase()}: ${fastener[tableType][k]*t}<br>`;document.getElementById("fasResult").innerHTML=out;}
+function fastenerToTable(){const type=document.getElementById("fasType").value;const qty=Number(document.getElementById("fasQty").value);if(!qty)return alert("Enter fastener quantity");const t=Math.floor(qty/fastener[tableType][type]);document.getElementById("fasTableResult").innerHTML=`Tables possible: ${t}`;}
+function tableToPost(){const t=Number(document.getElementById("pileTables").value);if(!t)return alert("Enter number of tables");document.getElementById("pileResult").innerHTML=`Column Posts Required: ${t*columnPost[pileTableType]}`;}
+function postToTable(){const qty=Number(document.getElementById("pileQty").value);if(!qty)return alert("Enter number of column posts");document.getElementById("pileTableResult").innerHTML=`Tables possible: ${Math.floor(qty/columnPost[pileTableType])}`;}
+
+populateMaterialDropdown();
 </script>
-<h1>sharath</h1>
 </body>
 </html>
