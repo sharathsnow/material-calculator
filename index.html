@@ -70,8 +70,9 @@ body{
   min-height:calc(100vh - 64px);
 }
 
-/* SIDEBAR AS GMAIL-LIKE TABS */
+/* SIDEBAR */
 .sidebar{
+  position:relative;
   width:160px;
   background:#222;
   display:flex;
@@ -81,7 +82,6 @@ body{
 .sidebar button{
   position:relative;
   width:100%;
-  margin:0;
   padding:12px 15px;
   border:none;
   background:#222;
@@ -89,20 +89,27 @@ body{
   text-align:left;
   font-weight:bold;
   cursor:pointer;
-  transition:0.2s;
+  transition:0.3s;
+  z-index:1;
+}
+.sidebar button:hover{
+  background:#333;
 }
 .sidebar button.active{
-  background:#111;
   color:#fff;
 }
-.sidebar button.active::before{
+
+/* GMAIL-STYLE BLUE INDICATOR */
+.sidebar::before{
   content:"";
   position:absolute;
   left:0;
-  top:0;
   width:4px;
-  height:100%;
-  background:#007bff; /* Active tab bar like Gmail */
+  height:48px;
+  background:#007bff;
+  border-radius:2px;
+  transition:0.3s;
+  top:0;
 }
 
 /* CONTENT */
@@ -118,12 +125,18 @@ body{
   margin-bottom:12px;
   flex-wrap:wrap
 }
-button.tab{padding:10px;border:none;border-radius:6px}
-button.tab.active{background:#007bff;color:#fff}
-.box{background:#fff;padding:15px;border-radius:8px}
-input,select{width:100%;padding:10px;margin:8px 0}
-.hidden{display:none}
-.output{margin-top:10px;font-size:15px}
+button.tab{
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+button.tab.active{background:#007bff;color:#fff;}
+
+.box{background:#fff;padding:15px;border-radius:8px;}
+input,select{width:100%;padding:10px;margin:8px 0;}
+.hidden{display:none;}
+.output{margin-top:10px;font-size:15px;}
 
 /* FOOTER */
 .footer{
@@ -139,7 +152,6 @@ input,select{width:100%;padding:10px;margin:8px 0}
   .sidebar{
     width:100%;
     flex-direction:row;
-    border-right:none;
     border-bottom:3px solid #007bff;
   }
   .sidebar button{
@@ -147,9 +159,7 @@ input,select{width:100%;padding:10px;margin:8px 0}
     text-align:center;
     border-radius:0;
   }
-  .sidebar button.active::before{
-    display:none;
-  }
+  .sidebar::before{display:none;}
 }
 </style>
 </head>
@@ -176,7 +186,7 @@ Not an official application.<br><br>
 <div class="container">
 
 <!-- SIDEBAR -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
   <button class="active" onclick="showMain(this,'mmsBox')">MMS</button>
   <button onclick="showMain(this,'pilingBox')">Piling</button>
   <button onclick="showMain(this,'moduleBox')">Module</button>
@@ -187,83 +197,83 @@ Not an official application.<br><br>
 
 <!-- MMS -->
 <div id="mmsBox" class="box">
-<div class="tabs">
-<button class="tab active" onclick="setTable(this,'full')">Full Table</button>
-<button class="tab" onclick="setTable(this,'half')">Half Table</button>
-</div>
+  <div class="tabs">
+    <button class="tab active" onclick="setTable(this,'full')">Full Table</button>
+    <button class="tab" onclick="setTable(this,'half')">Half Table</button>
+  </div>
 
-<div class="subtabs">
-<button class="tab active" onclick="setMode(this,'m_t2m')">Table → Material</button>
-<button class="tab" onclick="setMode(this,'m_m2t')">Material → Table</button>
-<button class="tab" onclick="setMode(this,'f_t2t')">Table → Fasteners</button>
-<button class="tab" onclick="setMode(this,'f_f2t')">Fasteners → Table</button>
-</div>
+  <div class="subtabs">
+    <button class="tab active" onclick="setSubTab(this,'m_t2m')">Table → Material</button>
+    <button class="tab" onclick="setSubTab(this,'m_m2t')">Material → Table</button>
+    <button class="tab" onclick="setSubTab(this,'f_t2t')">Table → Fasteners</button>
+    <button class="tab" onclick="setSubTab(this,'f_f2t')">Fasteners → Table</button>
+  </div>
 
-<div id="m_t2m">
-<input id="matTables" type="number" placeholder="No. of Tables">
-<button onclick="calcMaterial()">Calculate</button>
-<div id="matResult" class="output"></div>
-</div>
+  <div id="m_t2m">
+    <input id="matTables" type="number" placeholder="No. of Tables">
+    <button onclick="calcMaterial()">Calculate</button>
+    <div id="matResult" class="output"></div>
+  </div>
 
-<div id="m_m2t" class="hidden">
-<select id="matType"></select>
-<input id="matQty" type="number" placeholder="Material Quantity">
-<button onclick="materialToTable()">Calculate</button>
-<div id="matTableResult" class="output"></div>
-</div>
+  <div id="m_m2t" class="hidden">
+    <select id="matType"></select>
+    <input id="matQty" type="number" placeholder="Material Quantity">
+    <button onclick="materialToTable()">Calculate</button>
+    <div id="matTableResult" class="output"></div>
+  </div>
 
-<div id="f_t2t" class="hidden">
-<input id="fasTables" type="number" placeholder="No. of Tables">
-<button onclick="calcFasteners()">Calculate</button>
-<div id="fasResult" class="output"></div>
-</div>
+  <div id="f_t2t" class="hidden">
+    <input id="fasTables" type="number" placeholder="No. of Tables">
+    <button onclick="calcFasteners()">Calculate</button>
+    <div id="fasResult" class="output"></div>
+  </div>
 
-<div id="f_f2t" class="hidden">
-<select id="fasType">
-<option value="m10bn">M10 Bolt & Nut</option>
-<option value="m10pw">M10 P.W</option>
-<option value="m10sw">M10 S.W</option>
-<option value="m10rw">M10 R.W</option>
-<option value="m12bn">M12 Bolt & Nut</option>
-<option value="m12pw">M12 P.W</option>
-<option value="m12sw">M12 S.W</option>
-<option value="m8bn">M8 Bolt & Nut</option>
-<option value="m8rw">M8 R.W</option>
-</select>
-<input id="fasQty" type="number" placeholder="Fastener Quantity">
-<button onclick="fastenerToTable()">Calculate</button>
-<div id="fasTableResult" class="output"></div>
-</div>
+  <div id="f_f2t" class="hidden">
+    <select id="fasType">
+      <option value="m10bn">M10 Bolt & Nut</option>
+      <option value="m10pw">M10 P.W</option>
+      <option value="m10sw">M10 S.W</option>
+      <option value="m10rw">M10 R.W</option>
+      <option value="m12bn">M12 Bolt & Nut</option>
+      <option value="m12pw">M12 P.W</option>
+      <option value="m12sw">M12 S.W</option>
+      <option value="m8bn">M8 Bolt & Nut</option>
+      <option value="m8rw">M8 R.W</option>
+    </select>
+    <input id="fasQty" type="number" placeholder="Fastener Quantity">
+    <button onclick="fastenerToTable()">Calculate</button>
+    <div id="fasTableResult" class="output"></div>
+  </div>
 </div>
 
 <!-- PILING -->
 <div id="pilingBox" class="box hidden">
-<div class="tabs">
-<button class="tab active" onclick="setPileTable(this,'full')">Full Table</button>
-<button class="tab" onclick="setPileTable(this,'half')">Half Table</button>
-</div>
+  <div class="tabs">
+    <button class="tab active" onclick="setPileTable(this,'full')">Full Table</button>
+    <button class="tab" onclick="setPileTable(this,'half')">Half Table</button>
+  </div>
 
-<div class="subtabs">
-<button class="tab active" onclick="setMode(this,'p_t2p')">Table → Column Post</button>
-<button class="tab" onclick="setMode(this,'p_p2t')">Column Post → Table</button>
-</div>
+  <div class="subtabs">
+    <button class="tab active" onclick="setSubTab(this,'p_t2p')">Table → Column Post</button>
+    <button class="tab" onclick="setSubTab(this,'p_p2t')">Column Post → Table</button>
+  </div>
 
-<div id="p_t2p">
-<input id="pileTables" type="number" placeholder="No. of Tables">
-<button onclick="tableToPost()">Calculate</button>
-<div id="pileResult" class="output"></div>
-</div>
+  <div id="p_t2p">
+    <input id="pileTables" type="number" placeholder="No. of Tables">
+    <button onclick="tableToPost()">Calculate</button>
+    <div id="pileResult" class="output"></div>
+  </div>
 
-<div id="p_p2t" class="hidden">
-<input id="pileQty" type="number" placeholder="Column Post Quantity">
-<button onclick="postToTable()">Calculate</button>
-<div id="pileTableResult" class="output"></div>
-</div>
+  <div id="p_p2t" class="hidden">
+    <input id="pileQty" type="number" placeholder="Column Post Quantity">
+    <button onclick="postToTable()">Calculate</button>
+    <div id="pileTableResult" class="output"></div>
+  </div>
 </div>
 
 <!-- MODULE -->
 <div id="moduleBox" class="box hidden">
-<p>Module calculations can be added here.</p>
+  <p>Module calculations can be added here.</p>
 </div>
 
 </div>
@@ -277,7 +287,6 @@ Internal utility tool • Developed by Sharath Chandra
 // GLOBAL VARIABLES
 let tableType = "full";
 let pileTableType = "full";
-let currentMode = "m_t2m";
 
 // INFO ICON
 function toggleInfo() {
@@ -289,23 +298,42 @@ document.addEventListener("click", e => {
   }
 });
 
+// GMAIL-STYLE INDICATOR
+function updateIndicator(btn){
+  const sidebar=document.getElementById("sidebar");
+  const rect=btn.getBoundingClientRect();
+  const sidebarRect=sidebar.getBoundingClientRect();
+  const top=btn.offsetTop;
+  sidebar.style.setProperty('--indicator-top', top+'px');
+  sidebar.querySelector('::before');
+}
+
 // SHOW MAIN CONTENT
 function showMain(btn, boxId){
   document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
+  moveIndicator(btn);
   document.querySelectorAll(".box").forEach(b=>b.classList.add("hidden"));
   document.getElementById(boxId).classList.remove("hidden");
 }
 
-// MMS TABS
+// MOVE BLUE INDICATOR
+function moveIndicator(btn){
+  const sidebar=document.getElementById("sidebar");
+  const indicator=sidebar.querySelector('::before');
+  // Actually we do via inline style using pseudo-element alternative
+  sidebar.style.setProperty('--top', btn.offsetTop + 'px');
+  // Apply via CSS below
+}
+document.querySelectorAll('.sidebar button').forEach(b=>b.addEventListener('click',()=>moveIndicator(b)));
+
+// MMS / PILING TABS
 function setTable(btn,type){
   tableType=type;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   populateMaterialDropdown();
 }
-
-// PILING TABS
 function setPileTable(btn,type){
   pileTableType=type;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
@@ -313,13 +341,16 @@ function setPileTable(btn,type){
 }
 
 // SUBTABS
-function setMode(btn,mode){
-  currentMode=mode;
-  btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
+function setSubTab(btn, divId){
   const parent=btn.closest(".box");
-  parent.querySelectorAll("> div").forEach(d=>d.classList.add("hidden"));
-  document.getElementById(mode).classList.remove("hidden");
+  parent.querySelectorAll(".subtabs button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  parent.querySelectorAll("> div").forEach(d=>{
+    if(!d.classList.contains("tabs") && !d.classList.contains("subtabs")){
+      d.classList.add("hidden");
+    }
+  });
+  document.getElementById(divId).classList.remove("hidden");
 }
 
 // DATA
@@ -344,42 +375,47 @@ populateMaterialDropdown();
 // CALCULATIONS
 function calcMaterial(){
   const t=Number(document.getElementById("matTables").value);
-  if(!t)return alert("Enter number of tables");
-  const mat=material[tableType];
+  if(!t) return alert("Enter number of tables");
   let out="";
+  const mat=material[tableType];
   for(const k in mat) out+=`${labels[k]}: ${mat[k]*t}<br>`;
   document.getElementById("matResult").innerHTML=out;
 }
+
 function materialToTable(){
   const type=document.getElementById("matType").value;
   const qty=Number(document.getElementById("matQty").value);
-  if(!qty)return alert("Enter material quantity");
+  if(!qty) return alert("Enter material quantity");
   const t=Math.floor(qty/material[tableType][type]);
   document.getElementById("matTableResult").innerHTML=`Tables possible: ${t}`;
 }
+
 function calcFasteners(){
   const t=Number(document.getElementById("fasTables").value);
-  if(!t)return alert("Enter number of tables");
-  const fas=fastener[tableType];
+  if(!t) return alert("Enter number of tables");
   let out="";
+  const fas=fastener[tableType];
   for(const k in fas) out+=`${k.toUpperCase()}: ${fas[k]*t}<br>`;
   document.getElementById("fasResult").innerHTML=out;
 }
+
 function fastenerToTable(){
   const type=document.getElementById("fasType").value;
   const qty=Number(document.getElementById("fasQty").value);
-  if(!qty)return alert("Enter fastener quantity");
+  if(!qty) return alert("Enter fastener quantity");
   const t=Math.floor(qty/fastener[tableType][type]);
   document.getElementById("fasTableResult").innerHTML=`Tables possible: ${t}`;
 }
+
 function tableToPost(){
   const t=Number(document.getElementById("pileTables").value);
-  if(!t)return alert("Enter number of tables");
+  if(!t) return alert("Enter number of tables");
   document.getElementById("pileResult").innerHTML=`Column Posts Required: ${t*columnPost[pileTableType]}`;
 }
+
 function postToTable(){
   const qty=Number(document.getElementById("pileQty").value);
-  if(!qty)return alert("Enter number of column posts");
+  if(!qty) return alert("Enter number of column posts");
   document.getElementById("pileTableResult").innerHTML=`Tables possible: ${Math.floor(qty/columnPost[pileTableType])}`;
 }
 </script>
