@@ -70,22 +70,21 @@ body{
   min-height:calc(100vh - 64px);
 }
 
-/* SIDEBAR AS TAB-LIKE */
+/* SIDEBAR AS GMAIL-LIKE TABS */
 .sidebar{
   width:160px;
   background:#222;
   display:flex;
   flex-direction:column;
-  padding:10px;
-  border-right:3px solid #007bff;
+  padding:10px 0;
 }
 .sidebar button{
+  position:relative;
   width:100%;
-  margin-bottom:8px;
-  padding:12px;
+  margin:0;
+  padding:12px 15px;
   border:none;
-  border-radius:6px 6px 0 0; /* tab-like top corners */
-  background:#444;
+  background:#222;
   color:#fff;
   text-align:left;
   font-weight:bold;
@@ -93,8 +92,17 @@ body{
   transition:0.2s;
 }
 .sidebar button.active{
-  background:#007bff;
+  background:#111;
   color:#fff;
+}
+.sidebar button.active::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:4px;
+  height:100%;
+  background:#007bff; /* Active tab bar like Gmail */
 }
 
 /* CONTENT */
@@ -110,8 +118,8 @@ body{
   margin-bottom:12px;
   flex-wrap:wrap
 }
-button{padding:10px;border:none;border-radius:6px}
-button.active{background:#007bff;color:#fff}
+button.tab{padding:10px;border:none;border-radius:6px}
+button.tab.active{background:#007bff;color:#fff}
 .box{background:#fff;padding:15px;border-radius:8px}
 input,select{width:100%;padding:10px;margin:8px 0}
 .hidden{display:none}
@@ -130,17 +138,17 @@ input,select{width:100%;padding:10px;margin:8px 0}
   .container{flex-direction:column}
   .sidebar{
     width:100%;
-    display:flex;
     flex-direction:row;
-    gap:10px;
     border-right:none;
     border-bottom:3px solid #007bff;
   }
   .sidebar button{
     flex:1;
-    margin-bottom:0;
-    border-radius:6px;
     text-align:center;
+    border-radius:0;
+  }
+  .sidebar button.active::before{
+    display:none;
   }
 }
 </style>
@@ -180,15 +188,15 @@ Not an official application.<br><br>
 <!-- MMS -->
 <div id="mmsBox" class="box">
 <div class="tabs">
-<button class="active" onclick="setTable(this,'full')">Full Table</button>
-<button onclick="setTable(this,'half')">Half Table</button>
+<button class="tab active" onclick="setTable(this,'full')">Full Table</button>
+<button class="tab" onclick="setTable(this,'half')">Half Table</button>
 </div>
 
 <div class="subtabs">
-<button class="active" onclick="setMode(this,'m_t2m')">Table → Material</button>
-<button onclick="setMode(this,'m_m2t')">Material → Table</button>
-<button onclick="setMode(this,'f_t2t')">Table → Fasteners</button>
-<button onclick="setMode(this,'f_f2t')">Fasteners → Table</button>
+<button class="tab active" onclick="setMode(this,'m_t2m')">Table → Material</button>
+<button class="tab" onclick="setMode(this,'m_m2t')">Material → Table</button>
+<button class="tab" onclick="setMode(this,'f_t2t')">Table → Fasteners</button>
+<button class="tab" onclick="setMode(this,'f_f2t')">Fasteners → Table</button>
 </div>
 
 <div id="m_t2m">
@@ -231,13 +239,13 @@ Not an official application.<br><br>
 <!-- PILING -->
 <div id="pilingBox" class="box hidden">
 <div class="tabs">
-<button class="active" onclick="setPileTable(this,'full')">Full Table</button>
-<button onclick="setPileTable(this,'half')">Half Table</button>
+<button class="tab active" onclick="setPileTable(this,'full')">Full Table</button>
+<button class="tab" onclick="setPileTable(this,'half')">Half Table</button>
 </div>
 
 <div class="subtabs">
-<button class="active" onclick="setMode(this,'p_t2p')">Table → Column Post</button>
-<button onclick="setMode(this,'p_p2t')">Column Post → Table</button>
+<button class="tab active" onclick="setMode(this,'p_t2p')">Table → Column Post</button>
+<button class="tab" onclick="setMode(this,'p_p2t')">Column Post → Table</button>
 </div>
 
 <div id="p_t2p">
@@ -253,6 +261,7 @@ Not an official application.<br><br>
 </div>
 </div>
 
+<!-- MODULE -->
 <div id="moduleBox" class="box hidden">
 <p>Module calculations can be added here.</p>
 </div>
@@ -265,151 +274,113 @@ Internal utility tool • Developed by Sharath Chandra
 </div>
 
 <script>
-// =====================
 // GLOBAL VARIABLES
-// =====================
 let tableType = "full";
 let pileTableType = "full";
 let currentMode = "m_t2m";
 
-// =====================
-// INFO ICON TOGGLE
-// =====================
+// INFO ICON
 function toggleInfo() {
   document.getElementById("infoBox").classList.toggle("show");
 }
-
 document.addEventListener("click", e => {
-  if (!e.target.closest(".info-box") && !e.target.closest(".info-icon")) {
+  if(!e.target.closest(".info-box") && !e.target.closest(".info-icon")){
     document.getElementById("infoBox").classList.remove("show");
   }
 });
 
-// =====================
-// SHOW MAIN SECTION (SIDEBAR BUTTONS)
-// =====================
-function showMain(btn, boxId) {
-  document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
+// SHOW MAIN CONTENT
+function showMain(btn, boxId){
+  document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-
-  document.querySelectorAll(".box").forEach(box => box.classList.add("hidden"));
+  document.querySelectorAll(".box").forEach(b=>b.classList.add("hidden"));
   document.getElementById(boxId).classList.remove("hidden");
 }
 
-// =====================
-// TABS FOR MMS
-// =====================
-function setTable(btn, type) {
-  tableType = type;
-  btn.parentElement.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+// MMS TABS
+function setTable(btn,type){
+  tableType=type;
+  btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   populateMaterialDropdown();
 }
 
-// =====================
-// TABS FOR PILING
-// =====================
-function setPileTable(btn, type) {
-  pileTableType = type;
-  btn.parentElement.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+// PILING TABS
+function setPileTable(btn,type){
+  pileTableType=type;
+  btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 }
 
-// =====================
 // SUBTABS
-// =====================
-function setMode(btn, mode) {
-  currentMode = mode;
-  btn.parentElement.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+function setMode(btn,mode){
+  currentMode=mode;
+  btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-
-  const parentBox = btn.closest(".box");
-  parentBox.querySelectorAll("> div").forEach(div => div.classList.add("hidden"));
+  const parent=btn.closest(".box");
+  parent.querySelectorAll("> div").forEach(d=>d.classList.add("hidden"));
   document.getElementById(mode).classList.remove("hidden");
 }
 
-// =====================
 // DATA
-// =====================
-const material = {
-  full: { rafter:12,p1:4,p2:4,p3:4,p4:4,p5:4,p6:4,front:12,rear:12,channel:12,cross:2 },
-  half: { rafter:7,p7:4,p8:4,p9:4,front:7,rear:7,channel:7,cross:2 }
-};
-const labels = {
-  rafter:"Rafter", p1:"Purlin 1",p2:"Purlin 2",p3:"Purlin 3",p4:"Purlin 4",p5:"Purlin 5",p6:"Purlin 6",
-  p7:"Purlin 7",p8:"Purlin 8",p9:"Purlin 9",
-  front:"Front Bracing",rear:"Rear Bracing",channel:"Connecting Channel",cross:"Cross Bracing"
-};
-const fastener = {
-  full:{m10bn:324,m10pw:472,m10sw:324,m10rw:176,m12bn:24,m12pw:48,m12sw:24,m8bn:232,m8rw:232},
-  half:{m10bn:176,m10pw:264,m10sw:176,m10rw:88,m12bn:14,m12pw:28,m12sw:14,m8bn:116,m8rw:116}
-};
+const material={full:{rafter:12,p1:4,p2:4,p3:4,p4:4,p5:4,p6:4,front:12,rear:12,channel:12,cross:2},half:{rafter:7,p7:4,p8:4,p9:4,front:7,rear:7,channel:7,cross:2}};
+const labels={rafter:"Rafter",p1:"Purlin 1",p2:"Purlin 2",p3:"Purlin 3",p4:"Purlin 4",p5:"Purlin 5",p6:"Purlin 6",p7:"Purlin 7",p8:"Purlin 8",p9:"Purlin 9",front:"Front Bracing",rear:"Rear Bracing",channel:"Connecting Channel",cross:"Cross Bracing"};
+const fastener={full:{m10bn:324,m10pw:472,m10sw:324,m10rw:176,m12bn:24,m12pw:48,m12sw:24,m8bn:232,m8rw:232},half:{m10bn:176,m10pw:264,m10sw:176,m10rw:88,m12bn:14,m12pw:28,m12sw:14,m8bn:116,m8rw:116}};
 const columnPost={full:12,half:7};
 
-// =====================
 // MATERIAL DROPDOWN
-// =====================
-function populateMaterialDropdown() {
-  const matType = document.getElementById("matType");
-  matType.innerHTML = "";
-  Object.keys(material[tableType]).forEach(key => {
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = labels[key];
+function populateMaterialDropdown(){
+  const matType=document.getElementById("matType");
+  matType.innerHTML="";
+  Object.keys(material[tableType]).forEach(k=>{
+    const opt=document.createElement("option");
+    opt.value=k;
+    opt.textContent=labels[k];
     matType.appendChild(opt);
   });
 }
 populateMaterialDropdown();
 
-// =====================
 // CALCULATIONS
-// =====================
-function calcMaterial() {
-  const tables = Number(document.getElementById("matTables").value);
-  if(!tables) return alert("Enter number of tables");
-  const mat = material[tableType];
-  let output="";
-  for(const key in mat) output+=`${labels[key]}: ${mat[key]*tables}<br>`;
-  document.getElementById("matResult").innerHTML = output;
+function calcMaterial(){
+  const t=Number(document.getElementById("matTables").value);
+  if(!t)return alert("Enter number of tables");
+  const mat=material[tableType];
+  let out="";
+  for(const k in mat) out+=`${labels[k]}: ${mat[k]*t}<br>`;
+  document.getElementById("matResult").innerHTML=out;
 }
-
-function materialToTable() {
-  const type = document.getElementById("matType").value;
-  const qty = Number(document.getElementById("matQty").value);
-  if(!qty) return alert("Enter material quantity");
-  const tables = Math.floor(qty/material[tableType][type]);
-  document.getElementById("matTableResult").innerHTML = `Tables possible: ${tables}`;
+function materialToTable(){
+  const type=document.getElementById("matType").value;
+  const qty=Number(document.getElementById("matQty").value);
+  if(!qty)return alert("Enter material quantity");
+  const t=Math.floor(qty/material[tableType][type]);
+  document.getElementById("matTableResult").innerHTML=`Tables possible: ${t}`;
 }
-
-function calcFasteners() {
-  const tables = Number(document.getElementById("fasTables").value);
-  if(!tables) return alert("Enter number of tables");
-  const fas = fastener[tableType];
-  let output="";
-  for(const key in fas) output+=`${key.toUpperCase()}: ${fas[key]*tables}<br>`;
-  document.getElementById("fasResult").innerHTML = output;
+function calcFasteners(){
+  const t=Number(document.getElementById("fasTables").value);
+  if(!t)return alert("Enter number of tables");
+  const fas=fastener[tableType];
+  let out="";
+  for(const k in fas) out+=`${k.toUpperCase()}: ${fas[k]*t}<br>`;
+  document.getElementById("fasResult").innerHTML=out;
 }
-
-function fastenerToTable() {
-  const type = document.getElementById("fasType").value;
-  const qty = Number(document.getElementById("fasQty").value);
-  if(!qty) return alert("Enter fastener quantity");
-  const tables = Math.floor(qty/fastener[tableType][type]);
-  document.getElementById("fasTableResult").innerHTML = `Tables possible: ${tables}`;
+function fastenerToTable(){
+  const type=document.getElementById("fasType").value;
+  const qty=Number(document.getElementById("fasQty").value);
+  if(!qty)return alert("Enter fastener quantity");
+  const t=Math.floor(qty/fastener[tableType][type]);
+  document.getElementById("fasTableResult").innerHTML=`Tables possible: ${t}`;
 }
-
-function tableToPost() {
-  const tables = Number(document.getElementById("pileTables").value);
-  if(!tables) return alert("Enter number of tables");
-  const postsPerTable = columnPost[pileTableType];
-  document.getElementById("pileResult").innerHTML = `Column Posts Required: ${tables*postsPerTable}`;
+function tableToPost(){
+  const t=Number(document.getElementById("pileTables").value);
+  if(!t)return alert("Enter number of tables");
+  document.getElementById("pileResult").innerHTML=`Column Posts Required: ${t*columnPost[pileTableType]}`;
 }
-
-function postToTable() {
-  const qty = Number(document.getElementById("pileQty").value);
-  if(!qty) return alert("Enter number of column posts");
-  const postsPerTable = columnPost[pileTableType];
-  document.getElementById("pileTableResult").innerHTML = `Tables possible: ${Math.floor(qty/postsPerTable)}`;
+function postToTable(){
+  const qty=Number(document.getElementById("pileQty").value);
+  if(!qty)return alert("Enter number of column posts");
+  document.getElementById("pileTableResult").innerHTML=`Tables possible: ${Math.floor(qty/columnPost[pileTableType])}`;
 }
 </script>
 
