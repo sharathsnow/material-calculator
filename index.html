@@ -6,40 +6,104 @@
 <title>Solar Calculator</title>
 
 <style>
-body{font-family:Arial;background:#f4f6f8;padding:15px}
-h2{text-align:center}
-button{padding:10px;border:none;border-radius:6px;flex:1}
-.tabs,.subtabs{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-button{background:#ddd}
+body{
+  font-family:Arial;
+  background:#f4f6f8;
+  margin:0;
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#111;
+  color:#fff;
+  padding:12px 15px;
+}
+.header img{height:40px}
+.header h1{font-size:16px;margin:0}
+
+/* LAYOUT */
+.container{
+  display:flex;
+  min-height:calc(100vh - 64px);
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:160px;
+  background:#222;
+  padding:10px;
+}
+.sidebar button{
+  width:100%;
+  margin-bottom:10px;
+  padding:12px;
+  border:none;
+  border-radius:6px;
+  background:#444;
+  color:#fff;
+}
+.sidebar button.active{
+  background:#007bff;
+}
+
+/* CONTENT */
+.content{
+  flex:1;
+  padding:15px;
+}
+
+.tabs,.subtabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:12px;
+  flex-wrap:wrap
+}
+button{padding:10px;border:none;border-radius:6px}
 button.active{background:#007bff;color:#fff}
 .box{background:#fff;padding:15px;border-radius:8px}
 input,select{width:100%;padding:10px;margin:8px 0}
 .hidden{display:none}
 .output{margin-top:10px;font-size:15px}
+
+/* MOBILE */
+@media(max-width:768px){
+  .container{flex-direction:column}
+  .sidebar{width:100%;display:flex;gap:10px}
+}
 </style>
 </head>
 
 <body>
 
-<h2>Solar Material Calculator</h2>
-
-<!-- MAIN SIDEBAR -->
-<div class="tabs">
-<button class="active" onclick="showMain(this,'mms')">MMS</button>
-<button onclick="showMain(this,'piling')">Piling</button>
-<button onclick="showMain(this,'module')">Module</button>
+<!-- HEADER -->
+<div class="header">
+  <img src="IMG_4454.jpeg" alt="Amararaja Logo">
+  <h1>Amararaja Solar Infra (Nagalooty)</h1>
 </div>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <button class="active" onclick="showMain(this,'mms')">MMS</button>
+  <button onclick="showMain(this,'piling')">Piling</button>
+  <button onclick="showMain(this,'module')">Module</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
 
 <!-- ================= MMS ================= -->
 <div id="mmsBox" class="box">
 
-<!-- FULL / HALF TABLE -->
 <div class="tabs">
 <button class="active" onclick="setTable(this,'full')">Full Table</button>
 <button onclick="setTable(this,'half')">Half Table</button>
 </div>
 
-<!-- MMS OPTIONS -->
 <div class="subtabs">
 <button class="active" onclick="setMode(this,'m_t2m')">Table → Material</button>
 <button onclick="setMode(this,'m_m2t')">Material → Table</button>
@@ -87,22 +151,29 @@ input,select{width:100%;padding:10px;margin:8px 0}
 
 <!-- ================= PILING ================= -->
 <div id="pilingBox" class="box hidden">
+
+<div class="tabs">
+<button class="active" onclick="setPileTable(this,'full')">Full Table</button>
+<button onclick="setPileTable(this,'half')">Half Table</button>
+</div>
+
 <div class="subtabs">
-<button class="active" onclick="setMode(this,'p_t2p')">Table → Pile</button>
-<button onclick="setMode(this,'p_p2t')">Pile → Table</button>
+<button class="active" onclick="setMode(this,'p_t2p')">Table → Column Post</button>
+<button onclick="setMode(this,'p_p2t')">Column Post → Table</button>
 </div>
 
 <div id="p_t2p">
 <input id="pileTables" type="number" placeholder="No. of Tables">
-<button class="active" onclick="tableToPile()">Calculate</button>
+<button class="active" onclick="tableToPost()">Calculate</button>
 <div id="pileResult" class="output"></div>
 </div>
 
 <div id="p_p2t" class="hidden">
-<input id="pileQty" type="number" placeholder="Pile Quantity">
-<button class="active" onclick="pileToTable()">Calculate</button>
+<input id="pileQty" type="number" placeholder="Column Post Quantity">
+<button class="active" onclick="postToTable()">Calculate</button>
 <div id="pileTableResult" class="output"></div>
 </div>
+
 </div>
 
 <!-- ================= MODULE ================= -->
@@ -110,16 +181,20 @@ input,select{width:100%;padding:10px;margin:8px 0}
 <p>Module calculations can be added here.</p>
 </div>
 
+</div>
+</div>
+
 <script>
 let tableType="full";
+let pileTableType="full";
 
 const material={
-full:{post:12,rafter:12,p1:4,p2:4,p3:4,p4:4,p5:4,p6:4,front:12,rear:12,channel:12,cross:2},
-half:{post:7,rafter:7,p7:4,p8:4,p9:4,front:7,rear:7,channel:7,cross:2}
+full:{rafter:12,p1:4,p2:4,p3:4,p4:4,p5:4,p6:4,front:12,rear:12,channel:12,cross:2},
+half:{rafter:7,p7:4,p8:4,p9:4,front:7,rear:7,channel:7,cross:2}
 };
 
 const labels={
-post:"Column Post",rafter:"Rafter",
+rafter:"Rafter",
 p1:"Purlin 1",p2:"Purlin 2",p3:"Purlin 3",p4:"Purlin 4",p5:"Purlin 5",p6:"Purlin 6",
 p7:"Purlin 7",p8:"Purlin 8",p9:"Purlin 9",
 front:"Front Bracing",rear:"Rear Bracing",
@@ -131,7 +206,7 @@ full:{m10bn:324,m10pw:472,m10sw:324,m10rw:176,m12bn:24,m12pw:48,m12sw:24,m8bn:23
 half:{m10bn:176,m10pw:264,m10sw:176,m10rw:88,m12bn:14,m12pw:28,m12sw:14,m8bn:116,m8rw:116}
 };
 
-const pilesPerTable=4;
+const columnPost={full:12,half:7};
 
 function activate(btn){
 btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
@@ -139,7 +214,8 @@ btn.classList.add("active");
 }
 
 function showMain(btn,x){
-activate(btn);
+document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
 mmsBox.classList.toggle("hidden",x!=="mms");
 pilingBox.classList.toggle("hidden",x!=="piling");
 moduleBox.classList.toggle("hidden",x!=="module");
@@ -149,6 +225,11 @@ function setTable(btn,t){
 activate(btn);
 tableType=t;
 loadMaterialSelect();
+}
+
+function setPileTable(btn,t){
+activate(btn);
+pileTableType=t;
 }
 
 function setMode(btn,id){
@@ -193,12 +274,12 @@ function fastenerToTable(){
 fasTableResult.innerHTML="Tables : "+(fasQty.value/fastener[tableType][fasType.value]).toFixed(2);
 }
 
-function tableToPile(){
-pileResult.innerHTML="Total Piles : "+pileTables.value*pilesPerTable;
+function tableToPost(){
+pileResult.innerHTML="Column Posts : "+(pileTables.value*columnPost[pileTableType]);
 }
 
-function pileToTable(){
-pileTableResult.innerHTML="Tables : "+(pileQty.value/pilesPerTable).toFixed(2);
+function postToTable(){
+pileTableResult.innerHTML="Tables : "+(pileQty.value/columnPost[pileTableType]).toFixed(2);
 }
 </script>
 
