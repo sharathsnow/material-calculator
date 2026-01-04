@@ -1,20 +1,20 @@
 {
-  "name": "Amararaja Solar Utility",
+  "name": "Solar Material Calculator",
   "short_name": "Solar Calc",
-  "start_url": "/material-calculator/index.html",
-  "scope": "/material-calculator/",
+  "description": "Internal site utility for solar material calculation",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#111111",
+  "background_color": "#ffffff",
   "theme_color": "#111111",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/material-calculator/IMG_4454.jpeg",
+      "src": "IMG_4454.jpeg",
       "sizes": "192x192",
       "type": "image/jpeg"
     },
     {
-      "src": "/material-calculator/IMG_4454.jpeg",
+      "src": "IMG_4454.jpeg",
       "sizes": "512x512",
       "type": "image/jpeg"
     }
