@@ -3,7 +3,6 @@ const CACHE_NAME = "solar-calculator-v4";
 /* Files to cache */
 const FILES_TO_CACHE = [
   "./",
-  "./index.html",
   "./manifest.json",
   "./IMG_4454.jpeg"
 ];
