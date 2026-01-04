@@ -1,371 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111111">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Solar Calculator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<style>
-body{
-  font-family:Arial;
-  background:#f4f6f8;
-  margin:0;
-}
+  <title>Solar Material Calculator</title>
 
-/* HEADER */
-.header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background:#111;
-  color:#fff;
-  padding:12px 15px;
-  position:relative;
-}
-.header img{height:40px}
-.header h1{font-size:16px;margin:0}
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#111111" />
 
-/* INFO ICON */
-.info{
-  position:absolute;
-  right:15px;
-  font-size:18px;
-  cursor:pointer;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
 
-/* LAYOUT */
-.container{
-  display:flex;
-  min-height:calc(100vh - 64px);
-}
+    /* Header */
+    .header {
+      background: #111;
+      color: #fff;
+      padding: 14px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
 
-/* SIDEBAR */
-.sidebar{
-  width:160px;
-  background:#222;
-  padding:10px;
-}
-.sidebar button{
-  width:100%;
-  margin-bottom:10px;
-  padding:12px;
-  border:none;
-  border-radius:6px;
-  background:#444;
-  color:#fff;
-  cursor:pointer;
-}
-.sidebar button.active{
-  background:#007bff;
-}
+    /* Main Content */
+    .container {
+      padding: 15px;
+    }
 
-/* CONTENT */
-.content{
-  flex:1;
-  padding:15px;
-}
+    /* Info Icon */
+    #infoIcon {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      background: #007bff;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 28px;
+      cursor: pointer;
+      z-index: 9999;
+    }
 
-.tabs,.subtabs{
-  display:flex;
-  gap:10px;
-  margin-bottom:12px;
-  flex-wrap:wrap;
-}
+    /* Info Popup */
+    #infoPopup {
+      position: fixed;
+      top: 55px;
+      right: 12px;
+      width: 260px;
+      background: #111;
+      color: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+      z-index: 9999;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      animation: slideDown 0.3s ease;
+    }
 
-button{
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  transition:transform 0.1s ease, box-shadow 0.1s ease;
-}
-button:active{
-  transform:scale(0.96);
-  box-shadow:0 2px 6px rgba(0,0,0,0.3) inset;
-}
-button.active{
-  background:#007bff;
-  color:#fff;
-}
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-.box{
-  background:#fff;
-  padding:15px;
-  border-radius:8px;
-}
-
-input,select{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-}
-
-.hidden{display:none}
-.output{margin-top:10px;font-size:15px}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  font-size:12px;
-  padding:10px;
-  color:#666;
-}
-
-/* TOAST */
-.toast{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#333;
-  color:#fff;
-  padding:10px 16px;
-  border-radius:6px;
-  font-size:14px;
-  opacity:0;
-  pointer-events:none;
-  transition:0.3s;
-  z-index:999;
-}
-.toast.show{opacity:1}
-.toast.error{background:#c62828}
-.toast.success{background:#2e7d32}
-
-/* MOBILE */
-@media(max-width:768px){
-  .container{flex-direction:column}
-  .sidebar{
-    width:100%;
-    display:flex;
-    gap:10px;
-    overflow-x:auto;
-  }
-  .sidebar button{flex:1}
-}
-</style>
+    /* Offline Badge */
+    #offlineBadge {
+      position: fixed;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #d9534f;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      display: none;
+      z-index: 9999;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <img src="IMG_4454.jpeg">
-  <h1>Amararaja Solar Infra (Nagalooty)</h1>
-  <div class="info" onclick="showToast('Internal utility tool for site engineers')">ℹ️</div>
-</div>
+  <div class="header">
+    Solar Material Calculator
+  </div>
 
-<div class="container">
+  <div class="container">
+    <!-- Your existing calculator UI stays here -->
+    <p>Material calculation utilities for site engineers.</p>
+  </div>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <button class="active" onclick="showMain(this,'mms')">MMS</button>
-  <button onclick="showMain(this,'piling')">Piling</button>
-  <button onclick="showMain(this,'module')">Module</button>
-</div>
+  <!-- Info Icon -->
+  <div id="infoIcon" onclick="toggleInfo()">i</div>
 
-<!-- CONTENT -->
-<div class="content">
+  <!-- Info Popup -->
+  <div id="infoPopup">
+    <strong>Internal Website</strong><br><br>
+    This is an internal website for site utility purposes.<br>
+    Developed by <b>Sharath Chandra</b>.<br><br>
+    <small>Version: v1.0.0</small>
+  </div>
 
-<!-- MMS -->
-<div id="mmsBox" class="box">
-<div class="tabs">
-<button class="active" onclick="setTable(this,'full')">Full Table</button>
-<button onclick="setTable(this,'half')">Half Table</button>
-</div>
+  <!-- Offline Badge -->
+  <div id="offlineBadge">Offline Mode</div>
 
-<div class="subtabs">
-<button class="active" onclick="setMode(this,'m_t2m')">Table → Material</button>
-<button onclick="setMode(this,'m_m2t')">Material → Table</button>
-<button onclick="setMode(this,'f_t2t')">Table → Fasteners</button>
-<button onclick="setMode(this,'f_f2t')">Fasteners → Table</button>
-</div>
+  <script>
+    /* Info Popup toggle */
+    function toggleInfo() {
+      const popup = document.getElementById("infoPopup");
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+    }
 
-<div id="m_t2m">
-<input id="matTables" type="number" placeholder="No. of Tables">
-<button class="active" onclick="calcMaterial()">Calculate</button>
-<div id="matResult" class="output"></div>
-</div>
+    /* Close popup when clicking outside */
+    document.addEventListener("click", function (e) {
+      const icon = document.getElementById("infoIcon");
+      const popup = document.getElementById("infoPopup");
+      if (!icon.contains(e.target) && !popup.contains(e.target)) {
+        popup.style.display = "none";
+      }
+    });
 
-<div id="m_m2t" class="hidden">
-<select id="matType"></select>
-<input id="matQty" type="number" placeholder="Material Quantity">
-<button class="active" onclick="materialToTable()">Calculate</button>
-<div id="matTableResult" class="output"></div>
-</div>
+    /* Offline / Online indicator */
+    function updateOnlineStatus() {
+      const badge = document.getElementById("offlineBadge");
+      badge.style.display = navigator.onLine ? "none" : "block";
+    }
 
-<div id="f_t2t" class="hidden">
-<input id="fasTables" type="number" placeholder="No. of Tables">
-<button class="active" onclick="calcFasteners()">Calculate</button>
-<div id="fasResult" class="output"></div>
-</div>
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
+    updateOnlineStatus();
 
-<div id="f_f2t" class="hidden">
-<select id="fasType">
-<option value="m10bn">M10 Bolt & Nut</option>
-<option value="m10pw">M10 P.W</option>
-<option value="m10sw">M10 S.W</option>
-<option value="m10rw">M10 R.W</option>
-<option value="m12bn">M12 Bolt & Nut</option>
-<option value="m12pw">M12 P.W</option>
-<option value="m12sw">M12 S.W</option>
-<option value="m8bn">M8 Bolt & Nut</option>
-<option value="m8rw">M8 R.W</option>
-</select>
-<input id="fasQty" type="number" placeholder="Fastener Quantity">
-<button class="active" onclick="fastenerToTable()">Calculate</button>
-<div id="fasTableResult" class="output"></div>
-</div>
-</div>
-
-<!-- PILING -->
-<div id="pilingBox" class="box hidden">
-<div class="tabs">
-<button class="active" onclick="setPileTable(this,'full')">Full Table</button>
-<button onclick="setPileTable(this,'half')">Half Table</button>
-</div>
-
-<div class="subtabs">
-<button class="active" onclick="setMode(this,'p_t2p')">Table → Column Post</button>
-<button onclick="setMode(this,'p_p2t')">Column Post → Table</button>
-</div>
-
-<div id="p_t2p">
-<input id="pileTables" type="number" placeholder="No. of Tables">
-<button class="active" onclick="tableToPost()">Calculate</button>
-<div id="pileResult" class="output"></div>
-</div>
-
-<div id="p_p2t" class="hidden">
-<input id="pileQty" type="number" placeholder="Column Post Quantity">
-<button class="active" onclick="postToTable()">Calculate</button>
-<div id="pileTableResult" class="output"></div>
-</div>
-</div>
-
-<!-- MODULE -->
-<div id="moduleBox" class="box hidden">
-<p>Module calculations can be added here.</p>
-</div>
-
-</div>
-</div>
-
-<div class="footer">
-Internal utility tool • Developed by Sharath Chandra
-</div>
-
-<div id="toast" class="toast"></div>
-
-<script>
- if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(() => console.log("Service Worker Registered"))
-      .catch(err => console.log("SW failed", err));
-  });
- } 
-let tableType="full", pileTableType="full";
-
-const material={
-full:{rafter:12,p1:4,p2:4,p3:4,p4:4,p5:4,p6:4,front:12,rear:12,channel:12,cross:2},
-half:{rafter:7,p7:4,p8:4,p9:4,front:7,rear:7,channel:7,cross:2}
-};
-
-const labels={
-rafter:"Rafter",
-p1:"Purlin 1",p2:"Purlin 2",p3:"Purlin 3",p4:"Purlin 4",p5:"Purlin 5",p6:"Purlin 6",
-p7:"Purlin 7",p8:"Purlin 8",p9:"Purlin 9",
-front:"Front Bracing",rear:"Rear Bracing",
-channel:"Connecting Channel",cross:"Cross Bracing"
-};
-
-const fastener={
-full:{m10bn:324,m10pw:472,m10sw:324,m10rw:176,m12bn:24,m12pw:48,m12sw:24,m8bn:232,m8rw:232},
-half:{m10bn:176,m10pw:264,m10sw:176,m10rw:88,m12bn:14,m12pw:28,m12sw:14,m8bn:116,m8rw:116}
-};
-
-const columnPost={full:12,half:7};
-
-function activate(btn){
-btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-}
-
-function showMain(btn,x){
-document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-mmsBox.classList.toggle("hidden",x!=="mms");
-pilingBox.classList.toggle("hidden",x!=="piling");
-moduleBox.classList.toggle("hidden",x!=="module");
-}
-
-function setTable(btn,t){activate(btn);tableType=t;loadMaterialSelect();}
-function setPileTable(btn,t){activate(btn);pileTableType=t;}
-
-function setMode(btn,id){
-activate(btn);
-["m_t2m","m_m2t","f_t2t","f_f2t","p_t2p","p_p2t"].forEach(x=>{
-let e=document.getElementById(x);
-if(e) e.classList.toggle("hidden",x!==id);
-});
-}
-
-function loadMaterialSelect(){
-matType.innerHTML="";
-for(let k in material[tableType]){
-matType.innerHTML+=`<option value="${k}">${labels[k]}</option>`;
-}
-}
-loadMaterialSelect();
-
-function showToast(msg,type="success"){
-const t=document.getElementById("toast");
-t.textContent=msg;
-t.className=`toast show ${type}`;
-setTimeout(()=>t.classList.remove("show"),2500);
-}
-
-/* VALIDATED CALCULATIONS */
-function calcMaterial(){
-if(!matTables.value||matTables.value<=0)return showToast("Enter valid tables","error");
-let n=+matTables.value,out="";
-for(let k in material[tableType])out+=`${labels[k]} : ${material[tableType][k]*n}<br>`;
-matResult.innerHTML=out;showToast("Material calculated");
-}
-
-function materialToTable(){
-if(!matQty.value||matQty.value<=0)return showToast("Enter quantity","error");
-matTableResult.innerHTML="Tables : "+(matQty.value/material[tableType][matType.value]).toFixed(2);
-showToast("Tables calculated");
-}
-
-function calcFasteners(){
-if(!fasTables.value||fasTables.value<=0)return showToast("Enter tables","error");
-let n=+fasTables.value,out="";
-for(let k in fastener[tableType])out+=`${k.toUpperCase()} : ${fastener[tableType][k]*n}<br>`;
-fasResult.innerHTML=out;showToast("Fasteners calculated");
-}
-
-function fastenerToTable(){
-if(!fasQty.value||fasQty.value<=0)return showToast("Enter quantity","error");
-fasTableResult.innerHTML="Tables : "+(fasQty.value/fastener[tableType][fasType.value]).toFixed(2);
-showToast("Tables calculated");
-}
-
-function tableToPost(){
-if(!pileTables.value||pileTables.value<=0)return showToast("Enter tables","error");
-pileResult.innerHTML="Column Posts : "+pileTables.value*columnPost[pileTableType];
-showToast("Column posts calculated");
-}
-
-function postToTable(){
-if(!pileQty.value||pileQty.value<=0)return showToast("Enter quantity","error");
-pileTableResult.innerHTML="Tables : "+(pileQty.value/columnPost[pileTableType]).toFixed(2);
-showToast("Tables calculated");
-}
-</script>
+    /* Service Worker Registration */
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./sw.js")
+          .then(reg => {
+            console.log("Service Worker registered:", reg.scope);
+          })
+          .catch(err => {
+            console.error("Service Worker registration failed:", err);
+          });
+      });
+    }
+  </script>
 
 </body>
 </html>
