@@ -1,286 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Solar Material Calculator</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111111">
+<meta name="theme-color" content="#111">
 
 <style>
 body{
-  font-family:Arial;
-  background:#f4f6f8;
   margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:#f4f6f8;
 }
 
-/* HEADER */
-.header{
+/* TOP BAR */
+.topbar{
   display:flex;
   align-items:center;
-  gap:12px;
+  justify-content:space-between;
   background:#111;
   color:#fff;
-  padding:12px 15px;
-  position:relative;
+  padding:10px 14px;
 }
-.header img{height:40px}
-.header h1{font-size:16px;margin:0}
+
+.topbar-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.topbar img{
+  height:36px;
+}
+
+.topbar h1{
+  font-size:16px;
+  margin:0;
+  font-weight:600;
+}
 
 /* INFO ICON */
-.info{
-  position:absolute;
-  right:15px;
-  font-size:18px;
-  cursor:pointer;
-}
-
-/* LAYOUT */
-.container{
-  display:flex;
-  min-height:calc(100vh - 64px);
-}
-
-/* SIDEBAR */
-.sidebar{
-  width:160px;
-  background:#222;
-  padding:10px;
-}
-.sidebar button{
-  width:100%;
-  margin-bottom:10px;
-  padding:12px;
-  border:none;
-  border-radius:6px;
-  background:#444;
+#infoIcon{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:#1976d2;
   color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
   cursor:pointer;
-}
-.sidebar button.active{background:#007bff}
-
-/* CONTENT */
-.content{flex:1;padding:15px}
-.tabs,.subtabs{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-
-button{
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
-button.active{background:#007bff;color:#fff}
-
-.box{background:#fff;padding:15px;border-radius:8px}
-input,select{width:100%;padding:10px;margin:8px 0}
-.hidden{display:none}
-.output{margin-top:10px}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  font-size:12px;
-  padding:10px;
-  color:#666;
 }
 
 /* INFO POPUP */
 #infoPopup{
   position:fixed;
   top:60px;
-  right:15px;
-  width:260px;
-  background:#111;
-  color:#fff;
-  padding:12px;
+  right:12px;
+  background:#fff;
   border-radius:8px;
-  font-size:13px;
+  padding:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.25);
+  width:260px;
   display:none;
-  z-index:999;
+  z-index:1000;
+  font-size:14px;
 }
 
-/* OFFLINE */
-#offlineBadge{
-  position:fixed;
-  bottom:15px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#d9534f;
+/* LAYOUT */
+.layout{
+  display:flex;
+  height:calc(100vh - 52px);
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:200px;
+  background:#222;
   color:#fff;
-  padding:6px 12px;
-  border-radius:20px;
-  font-size:12px;
-  display:none;
 }
 
-/* MOBILE */
-@media(max-width:768px){
-  .container{flex-direction:column}
-  .sidebar{width:100%;display:flex;gap:10px}
-  .sidebar button{flex:1}
+.sidebar button{
+  width:100%;
+  padding:14px;
+  border:none;
+  background:none;
+  color:#fff;
+  text-align:left;
+  font-size:14px;
+  cursor:pointer;
+  border-bottom:1px solid #333;
+}
+
+.sidebar button.active{
+  background:#1976d2;
+}
+
+/* CONTENT */
+.content{
+  flex:1;
+  padding:16px;
+}
+
+/* FOOTER */
+.footer{
+  text-align:center;
+  font-size:12px;
+  color:#777;
+  padding:10px;
+  border-top:1px solid #ddd;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <img src="IMG_4454.jpeg">
-  <h1>Amararaja Solar Infra (Nagalooty)</h1>
-  <div class="info" onclick="toggleInfo()">ℹ️</div>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <img src="IMG_4454.jpeg" alt="Amararaja Logo">
+    <h1>Amararaja Solar Infra (Nagalooty)</h1>
+  </div>
+  <div id="infoIcon" onclick="toggleInfo()">i</div>
 </div>
 
 <!-- INFO POPUP -->
 <div id="infoPopup">
-<b>Internal Utility Tool</b><br><br>
-For site material calculation.<br>
-Developed by <b>Sharath Chandra</b><br><br>
-<small>Version v1.0</small>
+  <strong>Internal Utility Tool</strong><br><br>
+  Created for internal site engineers usage only.<br><br>
+  Developed by <b>Sharath Chandra</b><br>
+  <small>Version 1.0</small>
 </div>
 
-<div class="container">
+<!-- MAIN LAYOUT -->
+<div class="layout">
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <button class="active" onclick="showMain(this,'mms')">MMS</button>
-  <button onclick="showMain(this,'piling')">Piling</button>
-  <button onclick="showMain(this,'module')">Module</button>
-</div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <button class="active" onclick="showTab('piling', this)">Piling</button>
+    <button onclick="showTab('mms', this)">MMS</button>
+    <button onclick="showTab('module', this)">Module</button>
+  </div>
 
-<!-- CONTENT -->
-<div class="content">
+  <!-- CONTENT -->
+  <div class="content">
 
-<!-- MMS -->
-<div id="mmsBox" class="box">
-<div class="tabs">
-<button class="active" onclick="setTable(this,'full')">Full Table</button>
-<button onclick="setTable(this,'half')">Half Table</button>
-</div>
+    <div id="piling">
+      <h3>Piling</h3>
+      <p>
+        1 Full Table = <b>12 Column Posts</b><br>
+        1 Half Table = <b>7 Column Posts</b>
+      </p>
+    </div>
 
-<div class="subtabs">
-<button class="active" onclick="setMode(this,'m_t2m')">Table → Material</button>
-<button onclick="setMode(this,'m_m2t')">Material → Table</button>
-<button onclick="setMode(this,'f_t2t')">Table → Fasteners</button>
-<button onclick="setMode(this,'f_f2t')">Fasteners → Table</button>
-</div>
+    <div id="mms" style="display:none">
+      <h3>MMS</h3>
+      <p>
+        Column posts removed from MMS.<br>
+        Use Full / Half table selection only.
+      </p>
+    </div>
 
-<div id="m_t2m">
-<input id="matTables" type="number" placeholder="No. of Tables">
-<button class="active" onclick="calcMaterial()">Calculate</button>
-<div id="matResult" class="output"></div>
-</div>
+    <div id="module" style="display:none">
+      <h3>Module</h3>
+      <p>Module related calculations can be added here.</p>
+    </div>
 
-<div id="m_m2t" class="hidden">
-<select id="matType"></select>
-<input id="matQty" type="number" placeholder="Material Quantity">
-<button class="active" onclick="materialToTable()">Calculate</button>
-<div id="matTableResult" class="output"></div>
+  </div>
 </div>
 
-<div id="f_t2t" class="hidden">
-<input id="fasTables" type="number" placeholder="No. of Tables">
-<button class="active" onclick="calcFasteners()">Calculate</button>
-<div id="fasResult" class="output"></div>
-</div>
-
-<div id="f_f2t" class="hidden">
-<select id="fasType">
-<option value="m10bn">M10 Bolt & Nut</option>
-<option value="m10pw">M10 P.W</option>
-<option value="m10sw">M10 S.W</option>
-<option value="m10rw">M10 R.W</option>
-<option value="m12bn">M12 Bolt & Nut</option>
-<option value="m12pw">M12 P.W</option>
-<option value="m12sw">M12 S.W</option>
-<option value="m8bn">M8 Bolt & Nut</option>
-<option value="m8rw">M8 R.W</option>
-</select>
-<input id="fasQty" type="number" placeholder="Fastener Quantity">
-<button class="active" onclick="fastenerToTable()">Calculate</button>
-<div id="fasTableResult" class="output"></div>
-</div>
-</div>
-
-<!-- PILING -->
-<div id="pilingBox" class="box hidden">
-<div class="tabs">
-<button class="active" onclick="setPileTable(this,'full')">Full Table</button>
-<button onclick="setPileTable(this,'half')">Half Table</button>
-</div>
-
-<div class="subtabs">
-<button class="active" onclick="setMode(this,'p_t2p')">Table → Column Post</button>
-<button onclick="setMode(this,'p_p2t')">Column Post → Table</button>
-</div>
-
-<div id="p_t2p">
-<input id="pileTables" type="number" placeholder="No. of Tables">
-<button class="active" onclick="tableToPost()">Calculate</button>
-<div id="pileResult"></div>
-</div>
-
-<div id="p_p2t" class="hidden">
-<input id="pileQty" type="number" placeholder="Column Post Quantity">
-<button class="active" onclick="postToTable()">Calculate</button>
-<div id="pileTableResult"></div>
-</div>
-</div>
-
-<div id="moduleBox" class="box hidden">
-<p>Module calculations coming soon.</p>
-</div>
-
-</div>
-</div>
-
+<!-- FOOTER -->
 <div class="footer">
-Internal utility tool • Developed by Sharath Chandra
+  Internal utility tool • Developed by Sharath Chandra
 </div>
-
-<div id="offlineBadge">Offline Mode</div>
 
 <script>
-/* SERVICE WORKER */
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("service-worker.js");
+/* SIDEBAR TAB SWITCH */
+function showTab(tabId, btn){
+  document.querySelectorAll('.content > div')
+    .forEach(d => d.style.display='none');
+
+  document.getElementById(tabId).style.display='block';
+
+  document.querySelectorAll('.sidebar button')
+    .forEach(b => b.classList.remove('active'));
+
+  btn.classList.add('active');
 }
 
-/* UI LOGIC */
-let tableType="full", pileTableType="full";
-const material={full:{rafter:12},half:{rafter:7}};
-const columnPost={full:12,half:7};
-
-function showMain(btn,x){
-document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-mmsBox.classList.toggle("hidden",x!=="mms");
-pilingBox.classList.toggle("hidden",x!=="piling");
-moduleBox.classList.toggle("hidden",x!=="module");
-}
-
-function setTable(btn,t){activate(btn);tableType=t}
-function setPileTable(btn,t){activate(btn);pileTableType=t}
-function setMode(btn,id){
-activate(btn);
-["m_t2m","m_m2t","f_t2t","f_f2t","p_t2p","p_p2t"].forEach(x=>{
-let e=document.getElementById(x);
-if(e)e.classList.toggle("hidden",x!==id);
-});
-}
-function activate(btn){
-btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-}
-
+/* INFO POPUP */
 function toggleInfo(){
-infoPopup.style.display=infoPopup.style.display==="block"?"none":"block";
+  const popup = document.getElementById("infoPopup");
+  popup.style.display =
+    popup.style.display === "block" ? "none" : "block";
 }
 
-window.addEventListener("offline",()=>offlineBadge.style.display="block");
-window.addEventListener("online",()=>offlineBadge.style.display="none");
+/* CLOSE POPUP ON OUTSIDE CLICK */
+document.addEventListener("click", function(e){
+  const icon = document.getElementById("infoIcon");
+  const popup = document.getElementById("infoPopup");
+
+  if(!icon.contains(e.target) && !popup.contains(e.target)){
+    popup.style.display = "none";
+  }
+});
+
+/* SERVICE WORKER */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js');
+}
 </script>
 
 </body>
