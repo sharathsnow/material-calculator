@@ -1,4 +1,4 @@
-const CACHE_NAME = "solar-calculator-v3";
+const CACHE_NAME = "solar-calculator-v4";
 
 /* Files to cache */
 const FILES_TO_CACHE = [
