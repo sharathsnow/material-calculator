@@ -69,14 +69,8 @@
     }
 
     @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Offline Badge */
@@ -93,10 +87,92 @@
       display: none;
       z-index: 9999;
     }
+
+    /* ========================= */
+    /* PASSWORD / DISCLAIMER */
+    /* ========================= */
+    #authOverlay {
+      position: fixed;
+      inset: 0;
+      background: #111;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .authBox {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 350px;
+      text-align: center;
+    }
+
+    .authBox h2 {
+      margin-top: 0;
+    }
+
+    .authBox input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .authBox label {
+      font-size: 13px;
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    .authBox button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .error {
+      color: #ff6b6b;
+      font-size: 13px;
+      margin-top: 8px;
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- PASSWORD / DISCLAIMER SCREEN -->
+  <div id="authOverlay">
+    <div class="authBox">
+      <h2>Internal Access</h2>
+      <p style="font-size:13px">
+        This tool is for <b>internal site use only</b>.<br>
+        Data is indicative and not for commercial sharing.
+      </p>
+
+      <input type="password" id="passwordInput" placeholder="Enter password" />
+
+      <label>
+        <input type="checkbox" id="agreeCheck" />
+        I agree to the disclaimer
+      </label>
+
+      <button onclick="checkPassword()">Continue</button>
+
+      <div class="error" id="errorMsg"></div>
+    </div>
+  </div>
 
   <div class="header">
     Solar Material Calculator
@@ -122,13 +198,40 @@
   <div id="offlineBadge">Offline Mode</div>
 
   <script>
-    /* Info Popup toggle */
+    /* ========================= */
+    /* PASSWORD LOGIC */
+    /* ========================= */
+
+    const APP_PASSWORD = "solar@123"; // 🔑 CHANGE PASSWORD HERE
+
+    if (localStorage.getItem("authSuccess") === "true") {
+      document.getElementById("authOverlay").style.display = "none";
+    }
+
+    function checkPassword() {
+      const pwd = document.getElementById("passwordInput").value;
+      const agreed = document.getElementById("agreeCheck").checked;
+      const error = document.getElementById("errorMsg");
+
+      if (!agreed) {
+        error.textContent = "Please accept the disclaimer";
+        return;
+      }
+
+      if (pwd === APP_PASSWORD) {
+        localStorage.setItem("authSuccess", "true");
+        document.getElementById("authOverlay").style.display = "none";
+      } else {
+        error.textContent = "Incorrect password";
+      }
+    }
+
+    /* Info Popup */
     function toggleInfo() {
       const popup = document.getElementById("infoPopup");
       popup.style.display = popup.style.display === "block" ? "none" : "block";
     }
 
-    /* Close popup when clicking outside */
     document.addEventListener("click", function (e) {
       const icon = document.getElementById("infoIcon");
       const popup = document.getElementById("infoPopup");
@@ -147,17 +250,10 @@
     window.addEventListener("offline", updateOnlineStatus);
     updateOnlineStatus();
 
-    /* Service Worker Registration */
+    /* Service Worker */
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("./sw.js")
-          .then(reg => {
-            console.log("Service Worker registered:", reg.scope);
-          })
-          .catch(err => {
-            console.error("Service Worker registration failed:", err);
-          });
+        navigator.serviceWorker.register("./sw.js");
       });
     }
   </script>
