@@ -1,207 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solar Material Calculator</title>
+  <meta charset="UTF-8">
+  <title>Solar Material Calculator</title>
 
-<style>
-body{
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background:#f4f6f8;
-}
+  <!-- NORMAL VIEWPORT -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-/* TOP BAR */
-.topbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#111;
-  color:#fff;
-  padding:10px 14px;
-}
+  <!-- ❌ REMOVE PWA -->
+  <!-- No manifest -->
+  <!-- No service worker -->
+  <!-- No theme-color -->
+  <!-- No apple-web-app -->
 
-.topbar-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+  <style>
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:#f4f6f8;
+    }
 
-.topbar img{
-  height:36px;
-}
+    /* HEADER */
+    .header{
+      background:#111;
+      color:#fff;
+      padding:12px;
+      font-size:16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
 
-.topbar h1{
-  font-size:15px;
-  margin:0;
-  font-weight:600;
-}
+    /* INFO ICON */
+    #infoIcon{
+      position:fixed;
+      top:12px;
+      right:12px;
+      width:28px;
+      height:28px;
+      background:#007bff;
+      color:#fff;
+      border-radius:50%;
+      text-align:center;
+      line-height:28px;
+      font-weight:bold;
+      cursor:pointer;
+      z-index:9999;
+    }
 
-/* INFO ICON */
-#infoIcon{
-  width:26px;
-  height:26px;
-  border-radius:50%;
-  background:#1976d2;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  cursor:pointer;
-}
+    /* INFO POPUP (TOP) */
+    #infoPopup{
+      position:fixed;
+      top:52px;
+      right:12px;
+      width:260px;
+      background:#111;
+      color:#fff;
+      padding:12px;
+      border-radius:8px;
+      font-size:13px;
+      display:none;
+      z-index:9999;
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
+    }
 
-/* INFO POPUP */
-#infoPopup{
-  position:fixed;
-  top:60px;
-  right:12px;
-  background:#fff;
-  border-radius:8px;
-  padding:14px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.25);
-  width:260px;
-  display:none;
-  z-index:1000;
-  font-size:14px;
-}
+    .container{
+      padding:16px;
+    }
 
-/* TABS */
-.tabs{
-  display:flex;
-  background:#222;
-}
+    button{
+      padding:10px 14px;
+      border:none;
+      border-radius:6px;
+      background:#007bff;
+      color:#fff;
+      font-size:14px;
+      margin:4px 0;
+      cursor:pointer;
+    }
 
-.tabs button{
-  flex:1;
-  padding:14px;
-  border:none;
-  background:none;
-  color:#fff;
-  font-size:15px;
-  cursor:pointer;
-}
-
-.tabs button.active{
-  background:#1976d2;
-}
-
-/* CONTENT */
-.content{
-  padding:16px;
-}
-
-.card{
-  background:#fff;
-  border-radius:10px;
-  padding:18px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  font-size:12px;
-  color:#777;
-  padding:10px;
-  margin-top:20px;
-}
-</style>
+    input{
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+      border-radius:6px;
+      border:1px solid #ccc;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="topbar-left">
-    <img src="IMG_4454.jpeg" alt="Logo">
-    <h1>Amararaja Solar Infra (Nagalooty)</h1>
-  </div>
-  <div id="infoIcon">i</div>
-</div>
+  <!-- INFO ICON -->
+  <div id="infoIcon" onclick="toggleInfo()">i</div>
 
-<!-- INFO POPUP -->
-<div id="infoPopup">
-  <strong>Internal Utility Tool</strong><br><br>
-  For internal site engineers usage only.<br><br>
-  Developed by <b>Sharath Chandra</b><br>
-  <small>Version 1.0</small>
-</div>
-
-<!-- TABS -->
-<div class="tabs">
-  <button class="active" data-tab="piling">Piling</button>
-  <button data-tab="mms">MMS</button>
-  <button data-tab="module">Module</button>
-</div>
-
-<!-- CONTENT -->
-<div class="content">
-
-  <div id="piling" class="page">
-    <div class="card">
-      <h3>Piling</h3>
-      <p>
-        <b>1 Full Table = 12 Column Posts</b><br><br>
-        <b>1 Half Table = 7 Column Posts</b>
-      </p>
-    </div>
+  <!-- INFO POPUP -->
+  <div id="infoPopup">
+    <b>Internal Website</b><br><br>
+    This is an internal website for site utility purposes.<br>
+    Developed by <b>Sharath Chandra</b>.
   </div>
 
-  <div id="mms" class="page" style="display:none">
-    <div class="card">
-      <h3>MMS</h3>
-      <p>
-        Column posts removed from MMS.<br><br>
-        Full / Half table calculations can be added here.
-      </p>
-    </div>
+  <!-- HEADER -->
+  <div class="header">
+    Amaraja Solar Infra (Nagalooty)
   </div>
 
-  <div id="module" class="page" style="display:none">
-    <div class="card">
-      <h3>Module</h3>
-      <p>
-        Module related calculations can be added here.
-      </p>
-    </div>
+  <!-- MAIN CONTENT -->
+  <div class="container">
+
+    <button>MMS</button>
+    <button>Piling</button>
+    <button>Module</button>
+
+    <br><br>
+
+    <button>Full Table</button>
+    <button>Half Table</button>
+
+    <br><br>
+
+    <button>Table → Material</button>
+    <button>Material → Table</button>
+
+    <br><br>
+
+    <button>Table → Fasteners</button>
+    <button>Fasteners → Table</button>
+
+    <input type="number" placeholder="No. of Tables">
+
+    <br><br>
+
+    <button>Calculate</button>
+
   </div>
 
-</div>
+  <!-- JS -->
+  <script>
+    function toggleInfo(){
+      const popup = document.getElementById("infoPopup");
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+    }
 
-<!-- FOOTER -->
-<div class="footer">
-  Internal utility tool • Developed by Sharath Chandra
-</div>
-
-<script>
-/* TAB SWITCHING */
-document.querySelectorAll(".tabs button").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-
-    document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-    document.getElementById(btn.dataset.tab).style.display="block";
-  });
-});
-
-/* INFO POPUP */
-const infoIcon = document.getElementById("infoIcon");
-const infoPopup = document.getElementById("infoPopup");
-
-infoIcon.addEventListener("click",(e)=>{
-  e.stopPropagation();
-  infoPopup.style.display = infoPopup.style.display === "block" ? "none" : "block";
-});
-
-document.addEventListener("click",(e)=>{
-  if(!infoPopup.contains(e.target)){
-    infoPopup.style.display="none";
-  }
-});
-</script>
+    // Close popup when clicking outside
+    document.addEventListener("click", function(e){
+      if(!e.target.closest("#infoIcon") && !e.target.closest("#infoPopup")){
+        document.getElementById("infoPopup").style.display = "none";
+      }
+    });
+  </script>
 
 </body>
 </html>
