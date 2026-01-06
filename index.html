@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Solar Material Calculator</title>
 
 <style>
 body{
   margin:0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:Arial, Helvetica, sans-serif;
   background:#f4f6f8;
 }
 
@@ -28,12 +28,10 @@ body{
   gap:10px;
 }
 
-.topbar img{
-  height:36px;
-}
+.topbar img{height:36px}
 
 .topbar h1{
-  font-size:15px;
+  font-size:16px;
   margin:0;
   font-weight:600;
 }
@@ -67,36 +65,46 @@ body{
   font-size:14px;
 }
 
-/* TABS */
-.tabs{
+/* LAYOUT */
+.layout{
   display:flex;
+  min-height:calc(100vh - 52px);
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:200px;
   background:#222;
 }
 
-.tabs button{
-  flex:1;
+.sidebar button{
+  width:100%;
   padding:14px;
   border:none;
   background:none;
   color:#fff;
-  font-size:15px;
+  text-align:left;
+  font-size:14px;
   cursor:pointer;
+  border-bottom:1px solid #333;
 }
 
-.tabs button.active{
+.sidebar button.active{
   background:#1976d2;
 }
 
 /* CONTENT */
 .content{
+  flex:1;
   padding:16px;
+  background:#f4f6f8;
 }
 
-.card{
+/* BOX */
+.box{
   background:#fff;
-  border-radius:10px;
-  padding:18px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  padding:16px;
+  border-radius:8px;
 }
 
 /* FOOTER */
@@ -105,7 +113,20 @@ body{
   font-size:12px;
   color:#777;
   padding:10px;
-  margin-top:20px;
+  border-top:1px solid #ddd;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .layout{flex-direction:column}
+  .sidebar{
+    width:100%;
+    display:flex;
+  }
+  .sidebar button{
+    flex:1;
+    text-align:center;
+  }
 }
 </style>
 </head>
@@ -124,50 +145,46 @@ body{
 <!-- INFO POPUP -->
 <div id="infoPopup">
   <strong>Internal Utility Tool</strong><br><br>
-  For internal site engineers usage only.<br><br>
+  Created for internal site engineers usage only.<br><br>
   Developed by <b>Sharath Chandra</b><br>
   <small>Version 1.0</small>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="active" data-tab="piling">Piling</button>
-  <button data-tab="mms">MMS</button>
-  <button data-tab="module">Module</button>
-</div>
+<!-- MAIN LAYOUT -->
+<div class="layout">
 
-<!-- CONTENT -->
-<div class="content">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <button class="active" data-tab="piling">Piling</button>
+    <button data-tab="mms">MMS</button>
+    <button data-tab="module">Module</button>
+  </div>
 
-  <div id="piling" class="page">
-    <div class="card">
+  <!-- CONTENT -->
+  <div class="content">
+
+    <div id="piling" class="box">
       <h3>Piling</h3>
       <p>
-        <b>1 Full Table = 12 Column Posts</b><br><br>
-        <b>1 Half Table = 7 Column Posts</b>
+        1 Full Table = <b>12 Column Posts</b><br>
+        1 Half Table = <b>7 Column Posts</b>
       </p>
     </div>
-  </div>
 
-  <div id="mms" class="page" style="display:none">
-    <div class="card">
+    <div id="mms" class="box" style="display:none">
       <h3>MMS</h3>
       <p>
-        Column posts removed from MMS.<br><br>
-        Full / Half table calculations can be added here.
+        Column posts removed from MMS.<br>
+        Use Full / Half table selection only.
       </p>
     </div>
-  </div>
 
-  <div id="module" class="page" style="display:none">
-    <div class="card">
+    <div id="module" class="box" style="display:none">
       <h3>Module</h3>
-      <p>
-        Module related calculations can be added here.
-      </p>
+      <p>Module related calculations can be added here.</p>
     </div>
-  </div>
 
+  </div>
 </div>
 
 <!-- FOOTER -->
@@ -176,30 +193,42 @@ body{
 </div>
 
 <script>
-/* TAB SWITCHING */
-document.querySelectorAll(".tabs button").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
+document.addEventListener("DOMContentLoaded", function(){
 
-    document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-    document.getElementById(btn.dataset.tab).style.display="block";
+  const infoIcon = document.getElementById("infoIcon");
+  const infoPopup = document.getElementById("infoPopup");
+
+  /* INFO POPUP TOGGLE */
+  infoIcon.addEventListener("click", function(e){
+    e.stopPropagation();
+    infoPopup.style.display =
+      infoPopup.style.display === "block" ? "none" : "block";
   });
-});
 
-/* INFO POPUP */
-const infoIcon = document.getElementById("infoIcon");
-const infoPopup = document.getElementById("infoPopup");
+  document.body.addEventListener("click", function(){
+    infoPopup.style.display = "none";
+  });
 
-infoIcon.addEventListener("click",(e)=>{
-  e.stopPropagation();
-  infoPopup.style.display = infoPopup.style.display === "block" ? "none" : "block";
-});
+  infoPopup.addEventListener("click", function(e){
+    e.stopPropagation();
+  });
 
-document.addEventListener("click",(e)=>{
-  if(!infoPopup.contains(e.target)){
-    infoPopup.style.display="none";
-  }
+  /* SIDEBAR NAVIGATION */
+  const buttons = document.querySelectorAll(".sidebar button");
+  const sections = document.querySelectorAll(".content > div");
+
+  buttons.forEach(btn=>{
+    btn.addEventListener("click", function(){
+      const tab = this.dataset.tab;
+
+      sections.forEach(sec=>sec.style.display="none");
+      document.getElementById(tab).style.display="block";
+
+      buttons.forEach(b=>b.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+
 });
 </script>
 
