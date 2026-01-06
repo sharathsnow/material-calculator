@@ -5,14 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Solar Material Calculator</title>
 
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111">
-
 <style>
 body{
   margin:0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:Arial, Helvetica, sans-serif;
   background:#f4f6f8;
 }
 
@@ -32,9 +28,7 @@ body{
   gap:10px;
 }
 
-.topbar img{
-  height:36px;
-}
+.topbar img{height:36px}
 
 .topbar h1{
   font-size:16px;
@@ -74,14 +68,13 @@ body{
 /* LAYOUT */
 .layout{
   display:flex;
-  height:calc(100vh - 52px);
+  min-height:calc(100vh - 52px);
 }
 
 /* SIDEBAR */
 .sidebar{
   width:200px;
   background:#222;
-  color:#fff;
 }
 
 .sidebar button{
@@ -104,6 +97,14 @@ body{
 .content{
   flex:1;
   padding:16px;
+  background:#f4f6f8;
+}
+
+/* BOX */
+.box{
+  background:#fff;
+  padding:16px;
+  border-radius:8px;
 }
 
 /* FOOTER */
@@ -114,6 +115,19 @@ body{
   padding:10px;
   border-top:1px solid #ddd;
 }
+
+/* MOBILE */
+@media(max-width:768px){
+  .layout{flex-direction:column}
+  .sidebar{
+    width:100%;
+    display:flex;
+  }
+  .sidebar button{
+    flex:1;
+    text-align:center;
+  }
+}
 </style>
 </head>
 
@@ -122,10 +136,10 @@ body{
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-left">
-    <img src="IMG_4454.jpeg" alt="Amararaja Logo">
+    <img src="IMG_4454.jpeg" alt="Logo">
     <h1>Amararaja Solar Infra (Nagalooty)</h1>
   </div>
-  <div id="infoIcon" onclick="toggleInfo()">i</div>
+  <div id="infoIcon">i</div>
 </div>
 
 <!-- INFO POPUP -->
@@ -141,15 +155,15 @@ body{
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <button class="active" onclick="showTab('piling', this)">Piling</button>
-    <button onclick="showTab('mms', this)">MMS</button>
-    <button onclick="showTab('module', this)">Module</button>
+    <button class="active" data-tab="piling">Piling</button>
+    <button data-tab="mms">MMS</button>
+    <button data-tab="module">Module</button>
   </div>
 
   <!-- CONTENT -->
   <div class="content">
 
-    <div id="piling">
+    <div id="piling" class="box">
       <h3>Piling</h3>
       <p>
         1 Full Table = <b>12 Column Posts</b><br>
@@ -157,7 +171,7 @@ body{
       </p>
     </div>
 
-    <div id="mms" style="display:none">
+    <div id="mms" class="box" style="display:none">
       <h3>MMS</h3>
       <p>
         Column posts removed from MMS.<br>
@@ -165,7 +179,7 @@ body{
       </p>
     </div>
 
-    <div id="module" style="display:none">
+    <div id="module" class="box" style="display:none">
       <h3>Module</h3>
       <p>Module related calculations can be added here.</p>
     </div>
@@ -179,40 +193,43 @@ body{
 </div>
 
 <script>
-/* SIDEBAR TAB SWITCH */
-function showTab(tabId, btn){
-  document.querySelectorAll('.content > div')
-    .forEach(d => d.style.display='none');
+document.addEventListener("DOMContentLoaded", function(){
 
-  document.getElementById(tabId).style.display='block';
+  const infoIcon = document.getElementById("infoIcon");
+  const infoPopup = document.getElementById("infoPopup");
 
-  document.querySelectorAll('.sidebar button')
-    .forEach(b => b.classList.remove('active'));
+  /* INFO POPUP TOGGLE */
+  infoIcon.addEventListener("click", function(e){
+    e.stopPropagation();
+    infoPopup.style.display =
+      infoPopup.style.display === "block" ? "none" : "block";
+  });
 
-  btn.classList.add('active');
-}
+  document.body.addEventListener("click", function(){
+    infoPopup.style.display = "none";
+  });
 
-/* INFO POPUP */
-function toggleInfo(){
-  const popup = document.getElementById("infoPopup");
-  popup.style.display =
-    popup.style.display === "block" ? "none" : "block";
-}
+  infoPopup.addEventListener("click", function(e){
+    e.stopPropagation();
+  });
 
-/* CLOSE POPUP ON OUTSIDE CLICK */
-document.addEventListener("click", function(e){
-  const icon = document.getElementById("infoIcon");
-  const popup = document.getElementById("infoPopup");
+  /* SIDEBAR NAVIGATION */
+  const buttons = document.querySelectorAll(".sidebar button");
+  const sections = document.querySelectorAll(".content > div");
 
-  if(!icon.contains(e.target) && !popup.contains(e.target)){
-    popup.style.display = "none";
-  }
+  buttons.forEach(btn=>{
+    btn.addEventListener("click", function(){
+      const tab = this.dataset.tab;
+
+      sections.forEach(sec=>sec.style.display="none");
+      document.getElementById(tab).style.display="block";
+
+      buttons.forEach(b=>b.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+
 });
-
-/* SERVICE WORKER */
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('service-worker.js');
-}
 </script>
 
 </body>
