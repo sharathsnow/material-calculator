@@ -1,235 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Solar Material Calculator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solar Calculator</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:#f4f6f8;
-}
-
-/* TOP BAR */
-.topbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#111;
-  color:#fff;
-  padding:10px 14px;
-}
-
-.topbar-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.topbar img{height:36px}
-
-.topbar h1{
-  font-size:16px;
-  margin:0;
-  font-weight:600;
-}
-
-/* INFO ICON */
-#infoIcon{
-  width:26px;
-  height:26px;
-  border-radius:50%;
-  background:#1976d2;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-/* INFO POPUP */
-#infoPopup{
-  position:fixed;
-  top:60px;
-  right:12px;
-  background:#fff;
-  border-radius:8px;
-  padding:14px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.25);
-  width:260px;
-  display:none;
-  z-index:1000;
-  font-size:14px;
-}
-
-/* LAYOUT */
-.layout{
-  display:flex;
-  min-height:calc(100vh - 52px);
-}
-
-/* SIDEBAR */
-.sidebar{
-  width:200px;
-  background:#222;
-}
-
-.sidebar button{
-  width:100%;
-  padding:14px;
-  border:none;
-  background:none;
-  color:#fff;
-  text-align:left;
-  font-size:14px;
-  cursor:pointer;
-  border-bottom:1px solid #333;
-}
-
-.sidebar button.active{
-  background:#1976d2;
-}
-
-/* CONTENT */
-.content{
-  flex:1;
-  padding:16px;
-  background:#f4f6f8;
-}
-
-/* BOX */
-.box{
-  background:#fff;
-  padding:16px;
-  border-radius:8px;
-}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  font-size:12px;
-  color:#777;
-  padding:10px;
-  border-top:1px solid #ddd;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-  .layout{flex-direction:column}
-  .sidebar{
-    width:100%;
-    display:flex;
-  }
-  .sidebar button{
-    flex:1;
-    text-align:center;
-  }
-}
+body{font-family:Arial;background:#f4f6f8;padding:15px}
+h2{text-align:center}
+button{padding:10px;border:none;border-radius:6px;flex:1}
+.tabs,.subtabs{display:flex;gap:10px;margin-bottom:12px}
+.active{background:#007bff;color:#fff}
+.inactive{background:#ddd}
+.box{background:#fff;padding:15px;border-radius:8px}
+input,select{width:100%;padding:10px;margin:8px 0}
+.hidden{display:none}
+.output{margin-top:10px;font-size:15px}
 </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="topbar-left">
-    <img src="IMG_4454.jpeg" alt="Logo">
-    <h1>Amararaja Solar Infra (Nagalooty)</h1>
-  </div>
-  <div id="infoIcon">i</div>
+<h2>Solar Material & Fastener Calculator</h2>
+
+<!-- MAIN TABS -->
+<div class="tabs">
+<button class="active" onclick="showMain('material')">Material</button>
+<button onclick="showMain('fastener')">Fasteners</button>
 </div>
 
-<!-- INFO POPUP -->
-<div id="infoPopup">
-  <strong>Internal Utility Tool</strong><br><br>
-  Created for internal site engineers usage only.<br><br>
-  Developed by <b>Sharath Chandra</b><br>
-  <small>Version 1.0</small>
+<!-- MATERIAL -->
+<div id="materialBox" class="box">
+
+<div class="tabs">
+<button class="active" onclick="setTable('full')">Full Table</button>
+<button onclick="setTable('half')">Half Table</button>
 </div>
 
-<!-- MAIN LAYOUT -->
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <button class="active" data-tab="piling">Piling</button>
-    <button data-tab="mms">MMS</button>
-    <button data-tab="module">Module</button>
-  </div>
-
-  <!-- CONTENT -->
-  <div class="content">
-
-    <div id="piling" class="box">
-      <h3>Piling</h3>
-      <p>
-        1 Full Table = <b>12 Column Posts</b><br>
-        1 Half Table = <b>7 Column Posts</b>
-      </p>
-    </div>
-
-    <div id="mms" class="box" style="display:none">
-      <h3>MMS</h3>
-      <p>
-        Column posts removed from MMS.<br>
-        Use Full / Half table selection only.
-      </p>
-    </div>
-
-    <div id="module" class="box" style="display:none">
-      <h3>Module</h3>
-      <p>Module related calculations can be added here.</p>
-    </div>
-
-  </div>
+<div class="subtabs">
+<button class="active" onclick="setMode('m_t2m')">Table → Material</button>
+<button onclick="setMode('m_m2t')">Material → Table</button>
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
-  Internal utility tool • Developed by Sharath Chandra
+<!-- TABLE TO MATERIAL -->
+<div id="m_t2m">
+<input id="matTables" type="number" placeholder="No. of Tables">
+<button class="active" onclick="calcMaterial()">Calculate</button>
+<div id="matResult" class="output"></div>
+</div>
+
+<!-- MATERIAL TO TABLE -->
+<div id="m_m2t" class="hidden">
+<select id="matType"></select>
+<input id="matQty" type="number" placeholder="Material Quantity">
+<button class="active" onclick="materialToTable()">Calculate</button>
+<div id="matTableResult" class="output"></div>
+</div>
+
+</div>
+
+<!-- FASTENERS -->
+<div id="fastenerBox" class="box hidden">
+
+<div class="tabs">
+<button class="active" onclick="setTable('full')">Full Table</button>
+<button onclick="setTable('half')">Half Table</button>
+</div>
+
+<div class="subtabs">
+<button class="active" onclick="setMode('f_t2t')">Table → Fasteners</button>
+<button onclick="setMode('f_f2t')">Fasteners → Table</button>
+</div>
+
+<div id="f_t2t">
+<input id="fasTables" type="number" placeholder="No. of Tables">
+<button class="active" onclick="calcFasteners()">Calculate</button>
+<div id="fasResult" class="output"></div>
+</div>
+
+<div id="f_f2t" class="hidden">
+<select id="fasType">
+<option value="m10bn">M10 Bolt & Nut</option>
+<option value="m10pw">M10 P.W</option>
+<option value="m10sw">M10 S.W</option>
+<option value="m10rw">M10 R.W</option>
+<option value="m12bn">M12 Bolt & Nut</option>
+<option value="m12pw">M12 P.W</option>
+<option value="m12sw">M12 S.W</option>
+<option value="m8bn">M8 Bolt & Nut</option>
+<option value="m8rw">M8 R.W</option>
+</select>
+<input id="fasQty" type="number" placeholder="Fastener Quantity">
+<button class="active" onclick="fastenerToTable()">Calculate</button>
+<div id="fasTableResult" class="output"></div>
+</div>
+
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+let tableType="full";
 
-  const infoIcon = document.getElementById("infoIcon");
-  const infoPopup = document.getElementById("infoPopup");
+const material={
+full:{
+post:12,rafter:12,
+p1:4,p2:4,p3:4,p4:4,p5:4,p6:4,
+front:12,rear:12,channel:12,cross:2
+},
+half:{
+post:7,rafter:7,
+p7:4,p8:4,p9:4,
+front:7,rear:7,channel:7,cross:2
+}
+};
 
-  /* INFO POPUP TOGGLE */
-  infoIcon.addEventListener("click", function(e){
-    e.stopPropagation();
-    infoPopup.style.display =
-      infoPopup.style.display === "block" ? "none" : "block";
-  });
+const labels={
+post:"Column Post",rafter:"Rafter",
+p1:"Purlin 1",p2:"Purlin 2",p3:"Purlin 3",p4:"Purlin 4",p5:"Purlin 5",p6:"Purlin 6",
+p7:"Purlin 7",p8:"Purlin 8",p9:"Purlin 9",
+front:"Front Bracing",rear:"Rear Bracing",
+channel:"Connecting Channel",cross:"Cross Bracing"
+};
 
-  document.body.addEventListener("click", function(){
-    infoPopup.style.display = "none";
-  });
+const fastener={
+full:{m10bn:324,m10pw:472,m10sw:324,m10rw:176,m12bn:24,m12pw:48,m12sw:24,m8bn:232,m8rw:232},
+half:{m10bn:176,m10pw:264,m10sw:176,m10rw:88,m12bn:14,m12pw:28,m12sw:14,m8bn:116,m8rw:116}
+};
 
-  infoPopup.addEventListener("click", function(e){
-    e.stopPropagation();
-  });
+function showMain(x){
+materialBox.classList.toggle("hidden",x!=="material");
+fastenerBox.classList.toggle("hidden",x!=="fastener");
+}
 
-  /* SIDEBAR NAVIGATION */
-  const buttons = document.querySelectorAll(".sidebar button");
-  const sections = document.querySelectorAll(".content > div");
+function setTable(t){
+tableType=t;
+loadMaterialSelect();
+}
 
-  buttons.forEach(btn=>{
-    btn.addEventListener("click", function(){
-      const tab = this.dataset.tab;
-
-      sections.forEach(sec=>sec.style.display="none");
-      document.getElementById(tab).style.display="block";
-
-      buttons.forEach(b=>b.classList.remove("active"));
-      this.classList.add("active");
-    });
-  });
-
+function setMode(id){
+["m_t2m","m_m2t","f_t2t","f_f2t"].forEach(x=>{
+let e=document.getElementById(x);
+if(e) e.classList.toggle("hidden",x!==id);
 });
+}
+
+function loadMaterialSelect(){
+matType.innerHTML="";
+for(let k in material[tableType]){
+matType.innerHTML+=`<option value="${k}">${labels[k]}</option>`;
+}
+}
+
+loadMaterialSelect();
+
+function calcMaterial(){
+let n=Number(matTables.value);
+let d=material[tableType];
+let out="";
+for(let k in d){out+=`${labels[k]} : ${d[k]*n}<br>`}
+matResult.innerHTML=out;
+}
+
+function materialToTable(){
+let k=matType.value;
+matTableResult.innerHTML="Tables : "+(matQty.value/material[tableType][k]);
+}
+
+function calcFasteners(){
+let n=fasTables.value;
+let d=fastener[tableType];
+let out="";
+for(let k in d){out+=`${k.toUpperCase()} : ${d[k]*n}<br>`}
+fasResult.innerHTML=out;
+}
+
+function fastenerToTable(){
+let t=fasType.value;
+fasTableResult.innerHTML="Tables : "+(fasQty.value/fastener[tableType][t]);
+}
 </script>
 
 </body>
