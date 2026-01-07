@@ -5,29 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Solar Material Calculator</title>
 
+<!-- SIMPLE PASSWORD -->
+<script>
+(function(){
+  const PASSWORD = "solar@123";
+  if(sessionStorage.getItem("auth") !== "yes"){
+    const p = prompt("Enter password:");
+    if(p === PASSWORD){
+      sessionStorage.setItem("auth","yes");
+    }else{
+      alert("Wrong password");
+      location.reload();
+    }
+  }
+})();
+</script>
+
 <style>
 body{margin:0;font-family:Arial;background:#f4f6f8}
-.header{display:flex;align-items:center;gap:10px;background:#111;color:#fff;padding:12px}
+.hidden{display:none}
+
+/* HEADER */
+.header{
+  display:flex;align-items:center;gap:10px;
+  background:#111;color:#fff;padding:12px
+}
 .header img{height:36px}
 .header h1{font-size:16px;margin:0;flex:1}
-.info-icon{width:26px;height:26px;border-radius:50%;background:#fff;color:#111;font-weight:bold;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.info-popup{position:fixed;top:60px;right:12px;background:#fff;padding:14px;width:260px;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.3);font-size:13px;display:none;z-index:999}
 
+/* INFO */
+.info-icon{
+  width:26px;height:26px;border-radius:50%;
+  background:#fff;color:#111;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer
+}
+.info-popup{
+  position:fixed;top:60px;right:12px;
+  background:#fff;padding:14px;width:260px;
+  border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.3);
+  font-size:13px;display:none;z-index:999
+}
+
+/* LAYOUT */
 .container{display:flex;min-height:calc(100vh - 60px)}
-.sidebar{width:160px;background:#222;display:flex;flex-direction:column}
-.sidebar button{padding:14px;border:none;background:#222;color:#fff;text-align:left;cursor:pointer}
+.sidebar{
+  width:160px;background:#222;display:flex;flex-direction:column
+}
+.sidebar button{
+  padding:14px;border:none;background:#222;color:#fff;
+  text-align:left;cursor:pointer
+}
 .sidebar button.active{background:#007bff}
-
 .content{flex:1;padding:15px}
 .box{background:#fff;padding:15px;border-radius:8px}
-.tabs,.subtabs{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
-button.tab{padding:10px;border:none;border-radius:6px;cursor:pointer}
-button.tab.active{background:#007bff;color:#fff}
-.hidden{display:none}
-input,select{width:100%;padding:10px;margin:8px 0}
-.output{margin-top:10px;font-size:14px}
-.footer{text-align:center;font-size:12px;color:#666;padding:10px}
 
+/* TABS */
+.tabs{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.tab{
+  padding:10px;border:none;border-radius:6px;cursor:pointer
+}
+.tab.active{background:#007bff;color:#fff}
+
+input,select,button{
+  width:100%;padding:10px;margin:6px 0
+}
+.output{margin-top:10px;font-size:14px}
+
+/* FOOTER */
+.footer{
+  text-align:center;font-size:12px;color:#666;padding:10px
+}
+
+/* MOBILE */
 @media(max-width:768px){
   .container{flex-direction:column}
   .sidebar{flex-direction:row;width:100%}
@@ -38,12 +88,14 @@ input,select{width:100%;padding:10px;margin:8px 0}
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
   <img src="IMG_4454.jpeg">
   <h1>Amararaja Solar Infra (Nagalooty)</h1>
   <div class="info-icon" onclick="toggleInfo()">i</div>
 </div>
 
+<!-- INFO POPUP -->
 <div id="infoPopup" class="info-popup">
 <b>Internal Utility Tool</b><br><br>
 For site engineers only.<br>
@@ -53,6 +105,7 @@ Not an official application.<br><br>
 
 <div class="container">
 
+<!-- SIDEBAR -->
 <div class="sidebar">
   <button class="active" onclick="showSection('mms',this)">MMS</button>
   <button onclick="showSection('piling',this)">Piling</button>
@@ -61,84 +114,70 @@ Not an official application.<br><br>
 
 <div class="content">
 
-<!-- ================= MMS ================= -->
+<!-- MMS -->
 <div id="mms" class="box">
+  <div class="tabs">
+    <button class="tab active" onclick="setMMSTable('full',this)">Full Table</button>
+    <button class="tab" onclick="setMMSTable('half',this)">Half Table</button>
+  </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="setTableType('full',this)">Full Table</button>
-    <button class="tab" onclick="setTableType('half',this)">Half Table</button>
-  </div>
-
-  <div class="subtabs">
     <button class="tab active" onclick="showMMS('t2m',this)">Table → Material</button>
     <button class="tab" onclick="showMMS('m2t',this)">Material → Table</button>
-    <button class="tab" onclick="showMMS('t2f',this)">Table → Fasteners</button>
-    <button class="tab" onclick="showMMS('f2t',this)">Fasteners → Table</button>
   </div>
 
-  <!-- Table → Material -->
+  <!-- TABLE TO MATERIAL -->
   <div id="t2m">
-    <input id="tblMat" type="number" placeholder="No. of Tables">
+    <input id="mmsTables" type="number" placeholder="No. of Tables">
     <button onclick="calcMaterial()">Calculate</button>
-    <div id="matResult" class="output"></div>
+    <div id="mmsResult" class="output"></div>
   </div>
 
-  <!-- Material → Table -->
+  <!-- MATERIAL TO TABLE -->
   <div id="m2t" class="hidden">
     <select id="matType"></select>
     <input id="matQty" type="number" placeholder="Material Quantity">
     <button onclick="materialToTable()">Calculate</button>
-    <div id="matTableResult" class="output"></div>
+    <div id="mmsResult2" class="output"></div>
   </div>
-
-  <!-- Table → Fasteners -->
-  <div id="t2f" class="hidden">
-    <input id="tblFast" type="number" placeholder="No. of Tables">
-    <button onclick="calcFasteners()">Calculate</button>
-    <div id="fastResult" class="output"></div>
-  </div>
-
-  <!-- Fasteners → Table -->
-  <div id="f2t" class="hidden">
-    <select id="fastType"></select>
-    <input id="fastQty" type="number" placeholder="Fastener Quantity">
-    <button onclick="fastenerToTable()">Calculate</button>
-    <div id="fastTableResult" class="output"></div>
-  </div>
-
 </div>
 
-<!-- ================= PILING ================= -->
+<!-- PILING -->
 <div id="piling" class="box hidden">
   <div class="tabs">
-    <button class="tab active" onclick="setPileType('full',this)">Full Table</button>
-    <button class="tab" onclick="setPileType('half',this)">Half Table</button>
+    <button class="tab active" onclick="setPile('full',this)">Full Table</button>
+    <button class="tab" onclick="setPile('half',this)">Half Table</button>
   </div>
+
   <input id="pileTables" type="number" placeholder="No. of Tables">
   <button onclick="calcPiling()">Calculate</button>
   <div id="pileResult" class="output"></div>
 </div>
 
+<!-- MODULE -->
 <div id="module" class="box hidden">
-  <p>Module calculations can be added here.</p>
+  <p>Module calculations can be added later.</p>
 </div>
 
 </div>
 </div>
 
-<div class="footer">Internal utility tool • Developed by Sharath Chandra</div>
+<div class="footer">
+Internal utility tool • Developed by Sharath Chandra
+</div>
 
 <script>
 /* INFO */
 function toggleInfo(){
-  infoPopup.style.display = infoPopup.style.display==="block"?"none":"block";
+  const p=document.getElementById("infoPopup");
+  p.style.display=p.style.display==="block"?"none":"block";
 }
 document.addEventListener("click",e=>{
   if(!e.target.closest(".info-icon")&&!e.target.closest(".info-popup"))
-    infoPopup.style.display="none";
+    document.getElementById("infoPopup").style.display="none";
 });
 
-/* NAV */
+/* SIDEBAR */
 function showSection(id,btn){
   document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
@@ -146,84 +185,94 @@ function showSection(id,btn){
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* DATA */
-let tableType="full";
-
+/* MMS DATA */
+let mmsType="full";
 const materials={
-  full:{Rafter:12,"Purlin 1":4,"Purlin 2":4,"Purlin 3":4,"Purlin 4":4,"Purlin 5":4,"Purlin 6":4,"Front Bracing":12,"Rear Bracing":12,"Connecting Channel":12,"Cross Bracing":2},
-  half:{Rafter:7,"Purlin 7":4,"Purlin 8":4,"Purlin 9":4,"Front Bracing":7,"Rear Bracing":7,"Connecting Channel":7,"Cross Bracing":2}
+full:{
+"Rafter":12,
+"Purlins":24,
+"Bracing":12,
+"M12×30 Nut–Bolt":24,
+"M12×30 PV":48,
+"M12×30 SV":24,
+"M10×30 Nut–Bolt":324,
+"M10×30 PV":472,
+"M10×30 SV":324,
+"M10×30 RV":176,
+"M8×25 Bolt":232,
+"M8×25 Nut":232,
+"M8×25 RV":232
+},
+half:{
+"Rafter":7,
+"Purlins":14,
+"Bracing":7,
+"M12×30 Nut–Bolt":14,
+"M12×30 PV":28,
+"M12×30 SV":14,
+"M10×30 Nut–Bolt":176,
+"M10×30 PV":264,
+"M10×30 SV":176,
+"M10×30 RV":88,
+"M8×25 Bolt":120,
+"M8×25 Nut":120,
+"M8×25 RV":120
+}
 };
 
-const fasteners={
-  full:{
-    "M12×30 Nut–Bolt":24,"M12×30 Plain Washer (PV)":48,"M12×30 Spring Washer (SV)":24,
-    "M10×30 Nut–Bolt":324,"M10×30 Plain Washer (PV)":472,"M10×30 Spring Washer (SV)":324,
-    "M10×30 Round Washer (RV)":176,"M8×25 Bolt":232,"M8×25 Nut":232,"M8×25 Round Washer (RV)":232
-  },
-  half:{
-    "M12×30 Nut–Bolt":14,"M12×30 Plain Washer (PV)":28,"M12×30 Spring Washer (SV)":14,
-    "M10×30 Nut–Bolt":176,"M10×30 Plain Washer (PV)":264,"M10×30 Spring Washer (SV)":176,
-    "M10×30 Round Washer (RV)":88,"M8×25 Bolt":120,"M8×25 Nut":120,"M8×25 Round Washer (RV)":120
-  }
-};
-
-/* MMS */
-function setTableType(t,btn){
-  tableType=t;
+function setMMSTable(t,btn){
+  mmsType=t;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  loadDropdowns();
+  loadMaterials();
 }
 
 function showMMS(id,btn){
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  ["t2m","m2t","t2f","f2t"].forEach(x=>{
-    document.getElementById(x).classList.toggle("hidden",x!==id);
-  });
+  document.getElementById("t2m").classList.toggle("hidden",id!=="t2m");
+  document.getElementById("m2t").classList.toggle("hidden",id!=="m2t");
 }
 
-function loadDropdowns(){
-  matType.innerHTML="";
-  for(let k in materials[tableType]) matType.innerHTML+=`<option>${k}</option>`;
-  fastType.innerHTML="";
-  for(let k in fasteners[tableType]) fastType.innerHTML+=`<option>${k}</option>`;
+function loadMaterials(){
+  const s=document.getElementById("matType");
+  s.innerHTML="";
+  for(let k in materials[mmsType]){
+    s.innerHTML+=`<option value="${k}">${k}</option>`;
+  }
 }
-loadDropdowns();
+loadMaterials();
 
-/* CALCULATIONS */
 function calcMaterial(){
-  const n=+tblMat.value;if(!n)return alert("Enter tables");
-  let out="";for(let k in materials[tableType])out+=`${k}: ${materials[tableType][k]*n}<br>`;
-  matResult.innerHTML=out;
+  const n=+document.getElementById("mmsTables").value;
+  if(!n) return alert("Enter tables");
+  let out="";
+  for(let k in materials[mmsType]){
+    out+=`${k}: ${materials[mmsType][k]*n}<br>`;
+  }
+  document.getElementById("mmsResult").innerHTML=out;
 }
 
 function materialToTable(){
-  const q=+matQty.value;if(!q)return alert("Enter quantity");
-  matTableResult.innerHTML="Tables possible: "+Math.floor(q/materials[tableType][matType.value]);
-}
-
-function calcFasteners(){
-  const n=+tblFast.value;if(!n)return alert("Enter tables");
-  let out="";for(let k in fasteners[tableType])out+=`${k}: ${fasteners[tableType][k]*n}<br>`;
-  fastResult.innerHTML=out;
-}
-
-function fastenerToTable(){
-  const q=+fastQty.value;if(!q)return alert("Enter quantity");
-  fastTableResult.innerHTML="Tables possible: "+Math.floor(q/fasteners[tableType][fastType.value]);
+  const qty=+document.getElementById("matQty").value;
+  const type=document.getElementById("matType").value;
+  if(!qty) return alert("Enter quantity");
+  document.getElementById("mmsResult2").innerHTML=
+    "Tables possible: "+Math.floor(qty/materials[mmsType][type]);
 }
 
 /* PILING */
 let pileType="full";
-function setPileType(t,btn){
+function setPile(t,btn){
   pileType=t;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 }
 function calcPiling(){
-  const n=+pileTables.value;if(!n)return alert("Enter tables");
-  pileResult.innerHTML="Column Posts Required: "+(n*(pileType==="full"?12:7));
+  const n=+document.getElementById("pileTables").value;
+  if(!n) return alert("Enter tables");
+  document.getElementById("pileResult").innerHTML=
+    "Column Posts Required: "+(n*(pileType==="full"?12:7));
 }
 </script>
 
