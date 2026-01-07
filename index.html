@@ -6,100 +6,25 @@
 <title>Solar Material Calculator</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f4f6f8;
-}
-
-/* HEADER */
-.header{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:#111;
-  color:#fff;
-  padding:12px;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8}
+.header{display:flex;align-items:center;gap:10px;background:#111;color:#fff;padding:12px}
 .header img{height:36px}
 .header h1{font-size:16px;margin:0;flex:1}
-
-/* INFO ICON */
-.info-icon{
-  width:26px;height:26px;
-  border-radius:50%;
-  background:#fff;
-  color:#111;
-  font-weight:bold;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-}
-
-/* INFO POPUP */
-.info-popup{
-  position:fixed;
-  top:60px;
-  right:12px;
-  background:#fff;
-  padding:14px;
-  width:260px;
-  border-radius:8px;
-  box-shadow:0 6px 16px rgba(0,0,0,.3);
-  font-size:13px;
-  display:none;
-  z-index:999;
-}
-
-/* LAYOUT */
-.container{
-  display:flex;
-  min-height:calc(100vh - 60px);
-}
-
-/* SIDEBAR */
-.sidebar{
-  width:160px;
-  background:#222;
-  display:flex;
-  flex-direction:column;
-}
-.sidebar button{
-  padding:14px;
-  border:none;
-  background:#222;
-  color:#fff;
-  text-align:left;
-  cursor:pointer;
-}
+.info-icon{width:26px;height:26px;border-radius:50%;background:#fff;color:#111;font-weight:bold;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.info-popup{position:fixed;top:60px;right:12px;background:#fff;padding:14px;width:260px;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.3);font-size:13px;display:none;z-index:999}
+.container{display:flex;min-height:calc(100vh - 60px)}
+.sidebar{width:160px;background:#222;display:flex;flex-direction:column}
+.sidebar button{padding:14px;border:none;background:#222;color:#fff;text-align:left;cursor:pointer}
 .sidebar button.active{background:#007bff}
-
-/* CONTENT */
 .content{flex:1;padding:15px}
-
 .box{background:#fff;padding:15px;border-radius:8px}
 .tabs,.subtabs{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
-button.tab{
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
+button.tab{padding:10px;border:none;border-radius:6px;cursor:pointer}
 button.tab.active{background:#007bff;color:#fff}
 .hidden{display:none}
 input,select{width:100%;padding:10px;margin:8px 0}
-.output{margin-top:10px}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  font-size:12px;
-  color:#666;
-  padding:10px;
-}
-
-/* MOBILE */
+.output{margin-top:10px;font-size:14px}
+.footer{text-align:center;font-size:12px;color:#666;padding:10px}
 @media(max-width:768px){
   .container{flex-direction:column}
   .sidebar{flex-direction:row;width:100%}
@@ -110,14 +35,12 @@ input,select{width:100%;padding:10px;margin:8px 0}
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <img src="IMG_4454.jpeg">
   <h1>Amararaja Solar Infra (Nagalooty)</h1>
   <div class="info-icon" onclick="toggleInfo()">i</div>
 </div>
 
-<!-- INFO POPUP -->
 <div id="infoPopup" class="info-popup">
 <b>Internal Utility Tool</b><br><br>
 For site engineers only.<br>
@@ -127,14 +50,12 @@ Not an official application.<br><br>
 
 <div class="container">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
   <button class="active" onclick="showSection('mms',this)">MMS</button>
   <button onclick="showSection('piling',this)">Piling</button>
   <button onclick="showSection('module',this)">Module</button>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
 <!-- MMS -->
@@ -169,13 +90,11 @@ Not an official application.<br><br>
     <button class="tab active" onclick="setPile('full',this)">Full Table</button>
     <button class="tab" onclick="setPile('half',this)">Half Table</button>
   </div>
-
   <input id="pileTables" type="number" placeholder="No. of Tables">
   <button onclick="calcPiling()">Calculate</button>
   <div id="pileResult" class="output"></div>
 </div>
 
-<!-- MODULE -->
 <div id="module" class="box hidden">
   <p>Module calculations can be added here.</p>
 </div>
@@ -183,9 +102,7 @@ Not an official application.<br><br>
 </div>
 </div>
 
-<div class="footer">
-Internal utility tool • Developed by Sharath Chandra
-</div>
+<div class="footer">Internal utility tool • Developed by Sharath Chandra</div>
 
 <script>
 /* INFO */
@@ -206,11 +123,26 @@ function showSection(id,btn){
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* MMS LOGIC */
+/* MMS DATA */
 let mmsType="full";
 const material={
-  full:{Rafter:12,Purlins:24,Bracing:12},
-  half:{Rafter:7,Purlins:14,Bracing:7}
+  full:{
+    "Rafter":12,
+    "Purlin 1":4,"Purlin 2":4,"Purlin 3":4,
+    "Purlin 4":4,"Purlin 5":4,"Purlin 6":4,
+    "Front Bracing":12,
+    "Rear Bracing":12,
+    "Connecting Channel":12,
+    "Cross Bracing":2
+  },
+  half:{
+    "Rafter":7,
+    "Purlin 7":4,"Purlin 8":4,"Purlin 9":4,
+    "Front Bracing":7,
+    "Rear Bracing":7,
+    "Connecting Channel":7,
+    "Cross Bracing":2
+  }
 };
 
 function setMMSTable(t,btn){
@@ -237,21 +169,20 @@ function loadMaterials(){
 loadMaterials();
 
 function calcMaterial(){
-  const n=+document.getElementById("mmsTables").value;
-  if(!n) return alert("Enter tables");
+  const n=+mmsTables.value;
+  if(!n) return alert("Enter number of tables");
   let out="";
   for(let k in material[mmsType]){
     out+=`${k}: ${material[mmsType][k]*n}<br>`;
   }
-  document.getElementById("mmsResult").innerHTML=out;
+  mmsResult.innerHTML=out;
 }
 
 function materialToTable(){
-  const qty=+document.getElementById("matQty").value;
-  const type=document.getElementById("matType").value;
+  const qty=+matQty.value;
+  const type=matType.value;
   if(!qty) return alert("Enter quantity");
-  document.getElementById("mmsResult2").innerHTML=
-    "Tables possible: "+Math.floor(qty/material[mmsType][type]);
+  mmsResult2.innerHTML="Tables possible: "+Math.floor(qty/material[mmsType][type]);
 }
 
 /* PILING */
@@ -261,13 +192,11 @@ function setPile(t,btn){
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 }
-
 function calcPiling(){
-  const n=+document.getElementById("pileTables").value;
+  const n=+pileTables.value;
   if(!n) return alert("Enter tables");
   const posts=pileType==="full"?12:7;
-  document.getElementById("pileResult").innerHTML=
-    "Column Posts Required: "+(n*posts);
+  pileResult.innerHTML="Column Posts Required: "+(n*posts);
 }
 </script>
 
