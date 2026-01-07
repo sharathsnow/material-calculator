@@ -61,26 +61,45 @@ Not an official application.<br><br>
 <!-- MMS -->
 <div id="mms" class="box">
   <div class="tabs">
-    <button class="tab active" onclick="setMMSTable('full',this)">Full Table</button>
-    <button class="tab" onclick="setMMSTable('half',this)">Half Table</button>
+    <button class="tab active" onclick="setMMSType('full',this)">Full Table</button>
+    <button class="tab" onclick="setMMSType('half',this)">Half Table</button>
   </div>
 
   <div class="subtabs">
     <button class="tab active" onclick="showMMS('t2m',this)">Table → Material</button>
     <button class="tab" onclick="showMMS('m2t',this)">Material → Table</button>
+    <button class="tab" onclick="showMMS('t2f',this)">Table → Fasteners</button>
+    <button class="tab" onclick="showMMS('f2t',this)">Fasteners → Table</button>
   </div>
 
+  <!-- TABLE TO MATERIAL -->
   <div id="t2m">
     <input id="mmsTables" type="number" placeholder="No. of Tables">
     <button onclick="calcMaterial()">Calculate</button>
     <div id="mmsResult" class="output"></div>
   </div>
 
+  <!-- MATERIAL TO TABLE -->
   <div id="m2t" class="hidden">
     <select id="matType"></select>
     <input id="matQty" type="number" placeholder="Material Quantity">
     <button onclick="materialToTable()">Calculate</button>
     <div id="mmsResult2" class="output"></div>
+  </div>
+
+  <!-- TABLE TO FASTENERS -->
+  <div id="t2f" class="hidden">
+    <input id="fastTables" type="number" placeholder="No. of Tables">
+    <button onclick="calcFasteners()">Calculate</button>
+    <div id="fastResult" class="output"></div>
+  </div>
+
+  <!-- FASTENERS TO TABLE -->
+  <div id="f2t" class="hidden">
+    <select id="fastType"></select>
+    <input id="fastQty" type="number" placeholder="Fastener Quantity">
+    <button onclick="fastenerToTable()">Calculate</button>
+    <div id="fastResult2" class="output"></div>
   </div>
 </div>
 
@@ -107,12 +126,11 @@ Not an official application.<br><br>
 <script>
 /* INFO */
 function toggleInfo(){
-  const p=document.getElementById("infoPopup");
-  p.style.display=p.style.display==="block"?"none":"block";
+  infoPopup.style.display=infoPopup.style.display==="block"?"none":"block";
 }
 document.addEventListener("click",e=>{
   if(!e.target.closest(".info-icon")&&!e.target.closest(".info-popup"))
-    document.getElementById("infoPopup").style.display="none";
+    infoPopup.style.display="none";
 });
 
 /* SIDEBAR */
@@ -123,66 +141,100 @@ function showSection(id,btn){
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* MMS DATA */
+/* DATA */
 let mmsType="full";
+
 const material={
   full:{
-    "Rafter":12,
-    "Purlin 1":4,"Purlin 2":4,"Purlin 3":4,
+    "Rafter":12,"Purlin 1":4,"Purlin 2":4,"Purlin 3":4,
     "Purlin 4":4,"Purlin 5":4,"Purlin 6":4,
-    "Front Bracing":12,
-    "Rear Bracing":12,
-    "Connecting Channel":12,
-    "Cross Bracing":2
+    "Front Bracing":12,"Rear Bracing":12,
+    "Connecting Channel":12,"Cross Bracing":2
   },
   half:{
-    "Rafter":7,
-    "Purlin 7":4,"Purlin 8":4,"Purlin 9":4,
-    "Front Bracing":7,
-    "Rear Bracing":7,
-    "Connecting Channel":7,
-    "Cross Bracing":2
+    "Rafter":7,"Purlin 7":4,"Purlin 8":4,"Purlin 9":4,
+    "Front Bracing":7,"Rear Bracing":7,
+    "Connecting Channel":7,"Cross Bracing":2
   }
 };
 
-function setMMSTable(t,btn){
+const fasteners={
+  full:{
+    "M10 Bolt + Nut + Washer":48,
+    "M12 Bolt + Nut + Washer":24,
+    "Self Drilling Screw":60,
+    "Spring Washer":48
+  },
+  half:{
+    "M10 Bolt + Nut + Washer":28,
+    "M12 Bolt + Nut + Washer":14,
+    "Self Drilling Screw":35,
+    "Spring Washer":28
+  }
+};
+
+function setMMSType(t,btn){
   mmsType=t;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  loadMaterials();
+  loadMaterialSelect();
+  loadFastenerSelect();
 }
 
 function showMMS(id,btn){
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  document.getElementById("t2m").classList.toggle("hidden",id!=="t2m");
-  document.getElementById("m2t").classList.toggle("hidden",id!=="m2t");
+  ["t2m","m2t","t2f","f2t"].forEach(x=>{
+    document.getElementById(x).classList.toggle("hidden",x!==id);
+  });
 }
 
-function loadMaterials(){
-  const s=document.getElementById("matType");
-  s.innerHTML="";
-  for(let k in material[mmsType]){
-    s.innerHTML+=`<option value="${k}">${k}</option>`;
-  }
+/* MATERIAL */
+function loadMaterialSelect(){
+  matType.innerHTML="";
+  for(let k in material[mmsType])
+    matType.innerHTML+=`<option>${k}</option>`;
 }
-loadMaterials();
+loadMaterialSelect();
 
 function calcMaterial(){
   const n=+mmsTables.value;
-  if(!n) return alert("Enter number of tables");
+  if(!n) return alert("Enter tables");
   let out="";
-  for(let k in material[mmsType]){
+  for(let k in material[mmsType])
     out+=`${k}: ${material[mmsType][k]*n}<br>`;
-  }
   mmsResult.innerHTML=out;
 }
 
 function materialToTable(){
   const qty=+matQty.value;
-  const type=matType.value;
   if(!qty) return alert("Enter quantity");
-  mmsResult2.innerHTML="Tables possible: "+Math.floor(qty/material[mmsType][type]);
+  mmsResult2.innerHTML="Tables possible: "+
+    Math.floor(qty/material[mmsType][matType.value]);
+}
+
+/* FASTENERS */
+function loadFastenerSelect(){
+  fastType.innerHTML="";
+  for(let k in fasteners[mmsType])
+    fastType.innerHTML+=`<option>${k}</option>`;
+}
+loadFastenerSelect();
+
+function calcFasteners(){
+  const n=+fastTables.value;
+  if(!n) return alert("Enter tables");
+  let out="";
+  for(let k in fasteners[mmsType])
+    out+=`${k}: ${fasteners[mmsType][k]*n}<br>`;
+  fastResult.innerHTML=out;
+}
+
+function fastenerToTable(){
+  const qty=+fastQty.value;
+  if(!qty) return alert("Enter quantity");
+  fastResult2.innerHTML="Tables possible: "+
+    Math.floor(qty/fasteners[mmsType][fastType.value]);
 }
 
 /* PILING */
@@ -195,8 +247,7 @@ function setPile(t,btn){
 function calcPiling(){
   const n=+pileTables.value;
   if(!n) return alert("Enter tables");
-  const posts=pileType==="full"?12:7;
-  pileResult.innerHTML="Column Posts Required: "+(n*posts);
+  pileResult.innerHTML="Column Posts Required: "+(n*(pileType==="full"?12:7));
 }
 </script>
 
