@@ -33,10 +33,54 @@ body{margin:0;font-family:Arial;background:#f4f6f8}
 .content{flex:1;padding:15px}
 .box{background:#fff;padding:15px;border-radius:8px}
 
-/* TABS */
-.tabs{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.tab{padding:10px;border:none;border-radius:6px;cursor:pointer}
-.tab.active{background:#007bff;color:#fff}
+/* LEVEL LABEL */
+.level-title{
+  font-size:13px;
+  font-weight:bold;
+  color:#555;
+  margin:10px 0 6px;
+}
+
+/* LEVEL 1 – TABLE TYPE */
+.tabs-primary{
+  display:flex;
+  gap:8px;
+  margin-bottom:10px;
+}
+.tabs-primary .tab{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#e3e6ea;
+  cursor:pointer;
+  font-weight:bold;
+}
+.tabs-primary .tab.active{
+  background:#007bff;
+  color:#fff;
+}
+
+/* LEVEL 2 – CALC TYPE */
+.tabs-secondary{
+  display:flex;
+  gap:6px;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+.tabs-secondary .tab{
+  padding:8px 10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  background:#fff;
+  cursor:pointer;
+  font-size:13px;
+}
+.tabs-secondary .tab.active{
+  background:#222;
+  color:#fff;
+  border-color:#222;
+}
 
 input,select,button{width:100%;padding:10px;margin:6px 0}
 .output{margin-top:10px;font-size:14px}
@@ -55,7 +99,6 @@ input,select,button{width:100%;padding:10px;margin:6px 0}
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <img src="IMG_4454.jpeg">
   <h1>Amararaja Solar Infra (Nagalooty)</h1>
@@ -63,7 +106,6 @@ input,select,button{width:100%;padding:10px;margin:6px 0}
 
 <div class="container">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
   <button class="active" onclick="showSection('mms',this)">MMS</button>
   <button onclick="showSection('piling',this)">Piling</button>
@@ -74,14 +116,14 @@ input,select,button{width:100%;padding:10px;margin:6px 0}
 <!-- ================= MMS ================= -->
 <div id="mms" class="box">
 
-  <!-- TABLE TYPE -->
-  <div class="tabs">
+  <div class="level-title">TABLE TYPE</div>
+  <div class="tabs-primary">
     <button class="tab active" onclick="setTable('full',this)">Full Table</button>
     <button class="tab" onclick="setTable('half',this)">Half Table</button>
   </div>
 
-  <!-- MODE -->
-  <div class="tabs">
+  <div class="level-title">CALCULATION TYPE</div>
+  <div class="tabs-secondary">
     <button class="tab active" onclick="setMode('t2m',this)">Table → Material</button>
     <button class="tab" onclick="setMode('m2t',this)">Material → Table</button>
     <button class="tab" onclick="setMode('t2f',this)">Table → Fasteners</button>
@@ -95,7 +137,8 @@ input,select,button{width:100%;padding:10px;margin:6px 0}
 
 <!-- ================= PILING ================= -->
 <div id="piling" class="box hidden">
-  <div class="tabs">
+  <div class="level-title">TABLE TYPE</div>
+  <div class="tabs-primary">
     <button class="tab active" onclick="setPile('full',this)">Full Table</button>
     <button class="tab" onclick="setPile('half',this)">Half Table</button>
   </div>
@@ -110,7 +153,6 @@ input,select,button{width:100%;padding:10px;margin:6px 0}
 <div class="footer">Internal utility tool • Developed by Sharath Chandra</div>
 
 <script>
-/* DATA */
 const material={
 full:{Rafter:12,Purlin:24,Bracing:12},
 half:{Rafter:7,Purlin:14,Bracing:7}
@@ -129,11 +171,8 @@ half:{
 }
 };
 
-/* STATE */
-let tableType="full";
-let mode="t2m";
+let tableType="full",mode="t2m";
 
-/* NAV */
 function showSection(id,btn){
   document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
@@ -141,13 +180,13 @@ function showSection(id,btn){
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* CONTROLS */
 function setTable(t,btn){
   tableType=t;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   renderInputs();
 }
+
 function setMode(m,btn){
   mode=m;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
@@ -155,41 +194,30 @@ function setMode(m,btn){
   renderInputs();
 }
 
-/* INPUT UI */
 function renderInputs(){
   const d=document.getElementById("inputs");
   if(mode==="t2m"||mode==="t2f"){
     d.innerHTML=`<input id="qty" type="number" placeholder="No. of Tables">`;
   }else{
-    let opt="",src=(mode==="m2t"?material:fastener);
+    let src=(mode==="m2t"?material:fastener),opt="";
     for(let k in src[tableType]) opt+=`<option>${k}</option>`;
     d.innerHTML=`<select id="item">${opt}</select>
                  <input id="qty" type="number" placeholder="Quantity">`;
   }
 }
-renderInputs();
 
-/* CALC */
 function calculate(){
-  const q=+qty.value;
-  if(!q) return alert("Enter value");
+  const q=+qty.value;if(!q)return alert("Enter value");
   let out="";
-  if(mode==="t2m"){
-    for(let k in material[tableType]) out+=`${k}: ${material[tableType][k]*q}<br>`;
-  }
-  if(mode==="m2t"){
-    out="Tables possible: "+Math.floor(q/material[tableType][item.value]);
-  }
-  if(mode==="t2f"){
-    for(let k in fastener[tableType]) out+=`${k}: ${fastener[tableType][k]*q}<br>`;
-  }
-  if(mode==="f2t"){
-    out="Tables possible: "+Math.floor(q/fastener[tableType][item.value]);
-  }
+  if(mode==="t2m")for(let k in material[tableType])out+=`${k}: ${material[tableType][k]*q}<br>`;
+  if(mode==="m2t")out="Tables possible: "+Math.floor(q/material[tableType][item.value]);
+  if(mode==="t2f")for(let k in fastener[tableType])out+=`${k}: ${fastener[tableType][k]*q}<br>`;
+  if(mode==="f2t")out="Tables possible: "+Math.floor(q/fastener[tableType][item.value]);
   result.innerHTML=out;
 }
 
-/* PILING */
+renderInputs();
+
 let pileType="full";
 function setPile(t,btn){
   pileType=t;
@@ -197,8 +225,7 @@ function setPile(t,btn){
   btn.classList.add("active");
 }
 function calcPiling(){
-  const n=+pileTables.value;
-  if(!n) return alert("Enter tables");
+  const n=+pileTables.value;if(!n)return alert("Enter tables");
   pileResult.innerHTML="Column Posts Required: "+(n*(pileType==="full"?12:7));
 }
 </script>
