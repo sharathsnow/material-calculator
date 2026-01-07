@@ -222,7 +222,7 @@ input,select{width:100%;padding:10px;margin:8px 0}
   <div class="info-icon" onclick="toggleInfo()">i</div>
 </div>
 
-<<div class="info-popup" id="info">
+<div class="info-popup" id="info">
 <b>Internal Utility Tool</b><br><br>
 For easy site engineering calculations.<br><br>
 Developed by <b>Sharath Chandra</b><br>
@@ -320,9 +320,16 @@ function checkPassword(){
 
 /* INFO */
 function toggleInfo(){
-  const p=document.getElementById("infoPopup");
-  p.style.display=p.style.display==="block"?"none":"block";
+  const p = document.getElementById("info"); // correct id
+  p.style.display = p.style.display === "block" ? "none" : "block";
 }
+
+/* close info when clicking outside */
+document.addEventListener("click", e => {
+  if(!e.target.closest(".info-popup") && !e.target.closest(".info-icon")){
+    document.getElementById("info").style.display = "none";
+  }
+});
 
 /* SIDEBAR */
 function showSection(id,btn){
