@@ -8,10 +8,9 @@
 <!-- SIMPLE PASSWORD -->
 <script>
 (function(){
-  const PASSWORD = "solar@123";
-  if(sessionStorage.getItem("auth") !== "yes"){
-    const p = prompt("Enter password:");
-    if(p === PASSWORD){
+  if(sessionStorage.getItem("auth")!=="yes"){
+    const p = prompt("Enter password");
+    if(p==="solar@123"){
       sessionStorage.setItem("auth","yes");
     }else{
       alert("Wrong password");
@@ -61,7 +60,7 @@ body{margin:0;font-family:Arial;background:#f4f6f8}
 .box{background:#fff;padding:15px;border-radius:8px}
 
 /* TABS */
-.tabs{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 .tab{
   padding:10px;border:none;border-radius:6px;cursor:pointer
 }
@@ -73,9 +72,7 @@ input,select,button{
 .output{margin-top:10px;font-size:14px}
 
 /* FOOTER */
-.footer{
-  text-align:center;font-size:12px;color:#666;padding:10px
-}
+.footer{text-align:center;font-size:12px;color:#666;padding:10px}
 
 /* MOBILE */
 @media(max-width:768px){
@@ -95,11 +92,10 @@ input,select,button{
   <div class="info-icon" onclick="toggleInfo()">i</div>
 </div>
 
-<!-- INFO POPUP -->
 <div id="infoPopup" class="info-popup">
 <b>Internal Utility Tool</b><br><br>
 For site engineers only.<br>
-Not an official application.<br><br>
+Not official software.<br><br>
 <b>Developed by:</b> Sharath Chandra
 </div>
 
@@ -116,30 +112,26 @@ Not an official application.<br><br>
 
 <!-- MMS -->
 <div id="mms" class="box">
+
+  <!-- TABLE TYPE -->
   <div class="tabs">
-    <button class="tab active" onclick="setMMSTable('full',this)">Full Table</button>
-    <button class="tab" onclick="setMMSTable('half',this)">Half Table</button>
+    <button class="tab active" onclick="setType('full',this)">Full Table</button>
+    <button class="tab" onclick="setType('half',this)">Half Table</button>
   </div>
 
+  <!-- ACTIONS -->
   <div class="tabs">
-    <button class="tab active" onclick="showMMS('t2m',this)">Table → Material</button>
-    <button class="tab" onclick="showMMS('m2t',this)">Material → Table</button>
+    <button class="tab active" onclick="setMode('t2m',this)">Table → Material</button>
+    <button class="tab" onclick="setMode('m2t',this)">Material → Table</button>
+    <button class="tab" onclick="setMode('t2f',this)">Table → Fasteners</button>
+    <button class="tab" onclick="setMode('f2t',this)">Fasteners → Table</button>
   </div>
 
-  <!-- TABLE TO MATERIAL -->
-  <div id="t2m">
-    <input id="mmsTables" type="number" placeholder="No. of Tables">
-    <button onclick="calcMaterial()">Calculate</button>
-    <div id="mmsResult" class="output"></div>
-  </div>
+  <!-- INPUT AREA -->
+  <div id="inputArea"></div>
+  <button onclick="calculate()">Calculate</button>
+  <div id="result" class="output"></div>
 
-  <!-- MATERIAL TO TABLE -->
-  <div id="m2t" class="hidden">
-    <select id="matType"></select>
-    <input id="matQty" type="number" placeholder="Material Quantity">
-    <button onclick="materialToTable()">Calculate</button>
-    <div id="mmsResult2" class="output"></div>
-  </div>
 </div>
 
 <!-- PILING -->
@@ -148,7 +140,6 @@ Not an official application.<br><br>
     <button class="tab active" onclick="setPile('full',this)">Full Table</button>
     <button class="tab" onclick="setPile('half',this)">Half Table</button>
   </div>
-
   <input id="pileTables" type="number" placeholder="No. of Tables">
   <button onclick="calcPiling()">Calculate</button>
   <div id="pileResult" class="output"></div>
@@ -174,7 +165,7 @@ function toggleInfo(){
 }
 document.addEventListener("click",e=>{
   if(!e.target.closest(".info-icon")&&!e.target.closest(".info-popup"))
-    document.getElementById("infoPopup").style.display="none";
+    infoPopup.style.display="none";
 });
 
 /* SIDEBAR */
@@ -185,80 +176,78 @@ function showSection(id,btn){
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* MMS DATA */
-let mmsType="full";
-const materials={
+/* DATA */
+let tableType="full";
+let mode="t2m";
+
+const mms={
+full:{Rafter:12,Purlin:24,Bracing:12},
+half:{Rafter:7,Purlin:14,Bracing:7}
+};
+
+const fasteners={
 full:{
-"Rafter":12,
-"Purlins":24,
-"Bracing":12,
-"M12×30 Nut–Bolt":24,
-"M12×30 PV":48,
-"M12×30 SV":24,
-"M10×30 Nut–Bolt":324,
-"M10×30 PV":472,
-"M10×30 SV":324,
-"M10×30 RV":176,
-"M8×25 Bolt":232,
-"M8×25 Nut":232,
-"M8×25 RV":232
+"M12 NB":24,"M12 PV":48,"M12 SV":24,
+"M10 NB":324,"M10 PV":472,"M10 SV":324,"M10 RV":176,
+"M8 Bolt":232,"M8 Nut":232,"M8 RV":232
 },
 half:{
-"Rafter":7,
-"Purlins":14,
-"Bracing":7,
-"M12×30 Nut–Bolt":14,
-"M12×30 PV":28,
-"M12×30 SV":14,
-"M10×30 Nut–Bolt":176,
-"M10×30 PV":264,
-"M10×30 SV":176,
-"M10×30 RV":88,
-"M8×25 Bolt":120,
-"M8×25 Nut":120,
-"M8×25 RV":120
+"M12 NB":14,"M12 PV":28,"M12 SV":14,
+"M10 NB":176,"M10 PV":264,"M10 SV":176,"M10 RV":88,
+"M8 Bolt":120,"M8 Nut":120,"M8 RV":120
 }
 };
 
-function setMMSTable(t,btn){
-  mmsType=t;
+/* MMS LOGIC */
+function setType(t,btn){
+  tableType=t;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  loadMaterials();
+  renderInputs();
 }
 
-function showMMS(id,btn){
+function setMode(m,btn){
+  mode=m;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  document.getElementById("t2m").classList.toggle("hidden",id!=="t2m");
-  document.getElementById("m2t").classList.toggle("hidden",id!=="m2t");
+  renderInputs();
 }
 
-function loadMaterials(){
-  const s=document.getElementById("matType");
-  s.innerHTML="";
-  for(let k in materials[mmsType]){
-    s.innerHTML+=`<option value="${k}">${k}</option>`;
+function renderInputs(){
+  const d=document.getElementById("inputArea");
+  d.innerHTML="";
+  if(mode==="t2m"||mode==="t2f"){
+    d.innerHTML=`<input id="count" type="number" placeholder="No. of Tables">`;
+  }else{
+    const data = mode==="m2t"?mms[tableType]:fasteners[tableType];
+    let opt="";
+    for(let k in data) opt+=`<option value="${k}">${k}</option>`;
+    d.innerHTML=`<select id="item">${opt}</select>
+                 <input id="count" type="number" placeholder="Quantity">`;
   }
 }
-loadMaterials();
 
-function calcMaterial(){
-  const n=+document.getElementById("mmsTables").value;
-  if(!n) return alert("Enter tables");
+renderInputs();
+
+function calculate(){
+  const n=+document.getElementById("count").value;
+  if(!n) return alert("Enter value");
   let out="";
-  for(let k in materials[mmsType]){
-    out+=`${k}: ${materials[mmsType][k]*n}<br>`;
+  if(mode==="t2m"){
+    for(let k in mms[tableType]) out+=`${k}: ${mms[tableType][k]*n}<br>`;
   }
-  document.getElementById("mmsResult").innerHTML=out;
-}
-
-function materialToTable(){
-  const qty=+document.getElementById("matQty").value;
-  const type=document.getElementById("matType").value;
-  if(!qty) return alert("Enter quantity");
-  document.getElementById("mmsResult2").innerHTML=
-    "Tables possible: "+Math.floor(qty/materials[mmsType][type]);
+  if(mode==="t2f"){
+    for(let k in fasteners[tableType]) out+=`${k}: ${fasteners[tableType][k]*n}<br>`;
+  }
+  if(mode==="m2t"){
+    const i=document.getElementById("item").value;
+    out="Tables possible: "+Math.floor(n/mms[tableType][i]);
+  }
+  if(mode==="f2t"){
+    const i=document.getElementById("item").value;
+    out="Tables possible: "+Math.floor(n/fasteners[tableType][i]);
+  }
+  result.innerHTML=out;
 }
 
 /* PILING */
@@ -269,10 +258,9 @@ function setPile(t,btn){
   btn.classList.add("active");
 }
 function calcPiling(){
-  const n=+document.getElementById("pileTables").value;
+  const n=+pileTables.value;
   if(!n) return alert("Enter tables");
-  document.getElementById("pileResult").innerHTML=
-    "Column Posts Required: "+(n*(pileType==="full"?12:7));
+  pileResult.innerHTML="Column Posts Required: "+(n*(pileType==="full"?12:7));
 }
 </script>
 
