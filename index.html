@@ -3,46 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Solar Calculator</title>
+<title>Solar Material Calculator</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#f4f6f8}
 
 /* LOGIN */
-#login{height:100vh;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;padding:25px;border-radius:10px;width:280px;text-align:center}
-.login-box input,button{width:100%;padding:10px;margin-top:10px}
+#login{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.login-box{
+  background:#fff;
+  padding:25px;
+  border-radius:10px;
+  width:280px;
+  text-align:center;
+}
+.login-box input,
+.login-box button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+}
 
 /* HEADER */
-.header{display:flex;align-items:center;background:#111;color:#fff;padding:10px}
+.header{
+  display:flex;
+  align-items:center;
+  background:#111;
+  color:#fff;
+  padding:10px;
+}
 .header img{height:36px;margin-right:10px}
 .header h1{font-size:16px;margin:0;flex:1}
-.info-icon{background:#fff;color:#000;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.info-icon{
+  background:#fff;
+  color:#000;
+  width:26px;height:26px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-/* INFO */
-.info-popup{position:fixed;top:60px;right:10px;background:#fff;padding:14px;border-radius:8px;width:260px;box-shadow:0 5px 15px rgba(0,0,0,.3);display:none;font-size:13px;z-index:999}
+/* INFO POPUP */
+.info-popup{
+  position:fixed;
+  top:60px;
+  right:10px;
+  background:#fff;
+  padding:14px;
+  border-radius:8px;
+  width:260px;
+  box-shadow:0 5px 15px rgba(0,0,0,.3);
+  display:none;
+  font-size:13px;
+  z-index:999;
+}
 
 /* LAYOUT */
 .container{display:flex}
-.sidebar{width:150px;background:#222}
-.sidebar button{width:100%;padding:14px;border:none;background:#222;color:#fff;text-align:left}
+.sidebar{
+  width:150px;
+  background:#222;
+}
+.sidebar button{
+  width:100%;
+  padding:14px;
+  border:none;
+  background:#222;
+  color:#fff;
+  text-align:left;
+}
 .sidebar button.active{background:#007bff}
 .content{flex:1;padding:15px}
 .box{background:#fff;padding:15px;border-radius:8px}
 .hidden{display:none}
 
-/* LEVEL BUTTONS */
-.level1 button{background:#ddd;border:none;padding:8px 12px;border-radius:6px}
+/* BUTTON LEVELS */
+.level1 button{
+  background:#ddd;border:none;
+  padding:8px 12px;border-radius:6px;
+}
 .level1 button.active{background:#007bff;color:#fff}
 
-.level2 button{background:#e3f2fd;border:none;padding:8px 10px;border-radius:6px}
+.level2 button{
+  background:#e3f2fd;border:none;
+  padding:8px 10px;border-radius:6px;
+}
 .level2 button.active{background:#28a745;color:#fff}
 
-.calc-btn{background:#ff9800;color:#fff;border:none;padding:10px;width:100%;margin-top:10px;border-radius:6px}
+.calc-btn{
+  background:#ff9800;
+  color:#fff;
+  border:none;
+  padding:10px;
+  width:100%;
+  margin-top:10px;
+  border-radius:6px;
+}
 
 input,select{width:100%;padding:10px;margin:8px 0}
 
-.footer{text-align:center;font-size:12px;color:#666;padding:10px}
+.footer{
+  text-align:center;
+  font-size:12px;
+  color:#666;
+  padding:10px;
+}
 
 @media(max-width:768px){
 .container{flex-direction:column}
@@ -54,16 +127,16 @@ input,select{width:100%;padding:10px;margin:8px 0}
 
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN PAGE -->
 <div id="login">
   <div class="login-box">
-    <h3>Password</h3>
-    <input type="password" id="pwd" placeholder="Enter password">
-    <button onclick="login()">Enter</button>
+    <h3>Enter Password</h3>
+    <input type="password" id="pwd" placeholder="Password">
+    <button onclick="login()">Login</button>
   </div>
 </div>
 
-<!-- APP -->
+<!-- MAIN APP -->
 <div id="app" class="hidden">
 
 <div class="header">
@@ -75,10 +148,9 @@ input,select{width:100%;padding:10px;margin:8px 0}
 <div class="info-popup" id="info">
 <b>Internal Utility Tool</b><br><br>
 For easy site engineering calculations.<br><br>
-
+Developed by <b>Sharath Chandra</b><br>
 Version: v1.1<br>
-Last Updated: 07-Jan-2026 <br>
-Developed by: <b>Sharath Chandra</b><br>
+Last Updated: 07-Jan-2026
 </div>
 
 <div class="container">
@@ -93,145 +165,95 @@ Developed by: <b>Sharath Chandra</b><br>
 
 <!-- MMS -->
 <div id="mms" class="box">
-
-<div class="level1">
-  <button class="active" onclick="setType('full',this)">Full Table</button>
-  <button onclick="setType('half',this)">Half Table</button>
-</div>
-
-<div class="level2">
-  <button class="active" onclick="mode('t2m',this)">Table → Material</button>
-  <button onclick="mode('m2t',this)">Material → Table</button>
-  <button onclick="mode('t2f',this)">Table → Fasteners</button>
-  <button onclick="mode('f2t',this)">Fasteners → Table</button>
-</div>
-
-<div id="t2m">
-  <input id="tables1" type="number" placeholder="No. of Tables">
-  <button class="calc-btn" onclick="calcMaterial()">Calculate</button>
-  <div id="out1"></div>
-</div>
-
-<div id="m2t" class="hidden">
-  <select id="matSel"></select>
-  <input id="matQty" type="number" placeholder="Material Qty">
-  <button class="calc-btn" onclick="materialToTable()">Calculate</button>
-  <div id="out2"></div>
-</div>
-
-<div id="t2f" class="hidden">
-  <input id="tables2" type="number" placeholder="No. of Tables">
-  <button class="calc-btn" onclick="calcFasteners()">Calculate</button>
-  <div id="out3"></div>
-</div>
-
-<div id="f2t" class="hidden">
-  <select id="fasSel"></select>
-  <input id="fasQty" type="number" placeholder="Fastener Qty">
-  <button class="calc-btn" onclick="fastenerToTable()">Calculate</button>
-  <div id="out4"></div>
-</div>
-
-</div>
-
-<!-- PILING -->
-<div id="piling" class="box hidden">
   <div class="level1">
-    <button class="active" onclick="setPile('full',this)">Full Table</button>
-    <button onclick="setPile('half',this)">Half Table</button>
+    <button class="active" onclick="setType('full',this)">Full Table</button>
+    <button onclick="setType('half',this)">Half Table</button>
   </div>
+
+  <div class="level2">
+    <button class="active" onclick="mode('t2m',this)">Table → Material</button>
+    <button onclick="mode('m2t',this)">Material → Table</button>
+    <button onclick="mode('t2f',this)">Table → Fasteners</button>
+    <button onclick="mode('f2t',this)">Fasteners → Table</button>
+  </div>
+
+  <div id="t2m">
+    <input id="tables1" type="number" placeholder="No. of Tables">
+    <button class="calc-btn" onclick="calcMaterial()">Calculate</button>
+    <div id="out1"></div>
+  </div>
+
+  <div id="m2t" class="hidden">
+    <select id="matSel"></select>
+    <input id="matQty" type="number" placeholder="Material Quantity">
+    <button class="calc-btn" onclick="materialToTable()">Calculate</button>
+    <div id="out2"></div>
+  </div>
+
+  <div id="t2f" class="hidden">
+    <input id="tables2" type="number" placeholder="No. of Tables">
+    <button class="calc-btn" onclick="calcFasteners()">Calculate</button>
+    <div id="out3"></div>
+  </div>
+
+  <div id="f2t" class="hidden">
+    <select id="fasSel"></select>
+    <input id="fasQty" type="number" placeholder="Fastener Quantity">
+    <button class="calc-btn" onclick="fastenerToTable()">Calculate</button>
+    <div id="out4"></div>
+  </div>
+</div>
+
+<div id="piling" class="box hidden">
   <input id="pileTables" type="number" placeholder="No. of Tables">
   <button class="calc-btn" onclick="calcPile()">Calculate</button>
   <div id="pileOut"></div>
 </div>
 
 <div id="module" class="box hidden">
-Module related calculations can be added later.
+Module calculations can be added later.
 </div>
 
 </div>
 </div>
 
-<div class="footer">Internal utility tool • Developed by Sharath Chandra</div>
+<div class="footer">
+Internal utility tool • Developed by Sharath Chandra
+</div>
+
 </div>
 
 <script>
+/* PASSWORD FIX */
+const pwdInput = document.getElementById("pwd");
+const loginBox = document.getElementById("login");
+const appBox = document.getElementById("app");
+
 function login(){
- if(pwd.value==="solar@123"){
-  loginDiv.style.display="none";
-  app.classList.remove("hidden");
- }else alert("Wrong password");
+  if(pwdInput.value === "solar@123"){
+    loginBox.style.display="none";
+    appBox.classList.remove("hidden");
+  }else{
+    alert("Wrong password");
+  }
 }
 
+/* INFO */
 function toggleInfo(){
- info.style.display=info.style.display==="block"?"none":"block";
+  info.style.display = info.style.display==="block"?"none":"block";
 }
 document.addEventListener("click",e=>{
- if(!e.target.closest(".info-icon")&&!e.target.closest(".info-popup"))
-  info.style.display="none";
+  if(!e.target.closest(".info-icon") && !e.target.closest(".info-popup")){
+    info.style.display="none";
+  }
 });
 
+/* NAV */
 function show(id,btn){
- document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
- document.querySelectorAll(".box").forEach(b=>b.classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
-}
-
-let type="full", pile="full";
-const material={
- full:{Rafter:12,Front:12,Rear:12,Channel:12,Cross:2},
- half:{Rafter:7,Front:7,Rear:7,Channel:7,Cross:2}
-};
-const fastener={
- full:{M12NB:24,M12PW:48,M12SW:24,M10NB:324,M10PW:472,M10SW:324,M10RW:176,M8B:232,M8N:232,M8RW:232},
- half:{M12NB:14,M12PW:28,M12SW:14,M10NB:176,M10PW:264,M10SW:176,M10RW:88,M8B:120,M8N:120,M8RW:120}
-};
-
-function setType(t,btn){
- type=t;
- btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
- loadSelects();
-}
-function setPile(t,btn){
- pile=t;
- btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
-}
-
-function mode(id,btn){
- btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
- ["t2m","m2t","t2f","f2t"].forEach(x=>document.getElementById(x).classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
-}
-
-function loadSelects(){
- matSel.innerHTML=""; fasSel.innerHTML="";
- for(let k in material[type]) matSel.innerHTML+=`<option>${k}</option>`;
- for(let k in fastener[type]) fasSel.innerHTML+=`<option>${k}</option>`;
-}
-loadSelects();
-
-function calcMaterial(){
- let n=tables1.value,out="";
- for(let k in material[type]) out+=`${k}: ${material[type][k]*n}<br>`;
- out1.innerHTML=out;
-}
-function materialToTable(){
- out2.innerHTML="Tables: "+Math.floor(matQty.value/material[type][matSel.value]);
-}
-function calcFasteners(){
- let n=tables2.value,out="";
- for(let k in fastener[type]) out+=`${k}: ${fastener[type][k]*n}<br>`;
- out3.innerHTML=out;
-}
-function fastenerToTable(){
- out4.innerHTML="Tables: "+Math.floor(fasQty.value/fastener[type][fasSel.value]);
-}
-function calcPile(){
- pileOut.innerHTML="Column Posts: "+pileTables.value*(pile==="full"?12:7);
+  document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".box").forEach(b=>b.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
 }
 </script>
 
