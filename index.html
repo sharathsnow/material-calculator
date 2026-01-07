@@ -9,13 +9,9 @@
 <script>
 (function(){
   if(sessionStorage.getItem("auth")!=="yes"){
-    const p = prompt("Enter password");
-    if(p==="solar@123"){
-      sessionStorage.setItem("auth","yes");
-    }else{
-      alert("Wrong password");
-      location.reload();
-    }
+    const p=prompt("Enter password");
+    if(p==="solar@123"){sessionStorage.setItem("auth","yes");}
+    else{alert("Wrong password");location.reload();}
   }
 })();
 </script>
@@ -25,50 +21,24 @@ body{margin:0;font-family:Arial;background:#f4f6f8}
 .hidden{display:none}
 
 /* HEADER */
-.header{
-  display:flex;align-items:center;gap:10px;
-  background:#111;color:#fff;padding:12px
-}
+.header{display:flex;align-items:center;gap:10px;background:#111;color:#fff;padding:12px}
 .header img{height:36px}
 .header h1{font-size:16px;margin:0;flex:1}
 
-/* INFO */
-.info-icon{
-  width:26px;height:26px;border-radius:50%;
-  background:#fff;color:#111;font-weight:bold;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer
-}
-.info-popup{
-  position:fixed;top:60px;right:12px;
-  background:#fff;padding:14px;width:260px;
-  border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.3);
-  font-size:13px;display:none;z-index:999
-}
-
 /* LAYOUT */
 .container{display:flex;min-height:calc(100vh - 60px)}
-.sidebar{
-  width:160px;background:#222;display:flex;flex-direction:column
-}
-.sidebar button{
-  padding:14px;border:none;background:#222;color:#fff;
-  text-align:left;cursor:pointer
-}
+.sidebar{width:170px;background:#222;display:flex;flex-direction:column}
+.sidebar button{padding:14px;border:none;background:#222;color:#fff;text-align:left;cursor:pointer}
 .sidebar button.active{background:#007bff}
 .content{flex:1;padding:15px}
 .box{background:#fff;padding:15px;border-radius:8px}
 
 /* TABS */
 .tabs{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.tab{
-  padding:10px;border:none;border-radius:6px;cursor:pointer
-}
+.tab{padding:10px;border:none;border-radius:6px;cursor:pointer}
 .tab.active{background:#007bff;color:#fff}
 
-input,select,button{
-  width:100%;padding:10px;margin:6px 0
-}
+input,select,button{width:100%;padding:10px;margin:6px 0}
 .output{margin-top:10px;font-size:14px}
 
 /* FOOTER */
@@ -89,14 +59,6 @@ input,select,button{
 <div class="header">
   <img src="IMG_4454.jpeg">
   <h1>Amararaja Solar Infra (Nagalooty)</h1>
-  <div class="info-icon" onclick="toggleInfo()">i</div>
-</div>
-
-<div id="infoPopup" class="info-popup">
-<b>Internal Utility Tool</b><br><br>
-For site engineers only.<br>
-Not official software.<br><br>
-<b>Developed by:</b> Sharath Chandra
 </div>
 
 <div class="container">
@@ -105,21 +67,20 @@ Not official software.<br><br>
 <div class="sidebar">
   <button class="active" onclick="showSection('mms',this)">MMS</button>
   <button onclick="showSection('piling',this)">Piling</button>
-  <button onclick="showSection('module',this)">Module</button>
 </div>
 
 <div class="content">
 
-<!-- MMS -->
+<!-- ================= MMS ================= -->
 <div id="mms" class="box">
 
   <!-- TABLE TYPE -->
   <div class="tabs">
-    <button class="tab active" onclick="setType('full',this)">Full Table</button>
-    <button class="tab" onclick="setType('half',this)">Half Table</button>
+    <button class="tab active" onclick="setTable('full',this)">Full Table</button>
+    <button class="tab" onclick="setTable('half',this)">Half Table</button>
   </div>
 
-  <!-- ACTIONS -->
+  <!-- MODE -->
   <div class="tabs">
     <button class="tab active" onclick="setMode('t2m',this)">Table → Material</button>
     <button class="tab" onclick="setMode('m2t',this)">Material → Table</button>
@@ -127,14 +88,12 @@ Not official software.<br><br>
     <button class="tab" onclick="setMode('f2t',this)">Fasteners → Table</button>
   </div>
 
-  <!-- INPUT AREA -->
-  <div id="inputArea"></div>
+  <div id="inputs"></div>
   <button onclick="calculate()">Calculate</button>
   <div id="result" class="output"></div>
-
 </div>
 
-<!-- PILING -->
+<!-- ================= PILING ================= -->
 <div id="piling" class="box hidden">
   <div class="tabs">
     <button class="tab active" onclick="setPile('full',this)">Full Table</button>
@@ -145,30 +104,36 @@ Not official software.<br><br>
   <div id="pileResult" class="output"></div>
 </div>
 
-<!-- MODULE -->
-<div id="module" class="box hidden">
-  <p>Module calculations can be added later.</p>
-</div>
-
 </div>
 </div>
 
-<div class="footer">
-Internal utility tool • Developed by Sharath Chandra
-</div>
+<div class="footer">Internal utility tool • Developed by Sharath Chandra</div>
 
 <script>
-/* INFO */
-function toggleInfo(){
-  const p=document.getElementById("infoPopup");
-  p.style.display=p.style.display==="block"?"none":"block";
-}
-document.addEventListener("click",e=>{
-  if(!e.target.closest(".info-icon")&&!e.target.closest(".info-popup"))
-    infoPopup.style.display="none";
-});
+/* DATA */
+const material={
+full:{Rafter:12,Purlin:24,Bracing:12},
+half:{Rafter:7,Purlin:14,Bracing:7}
+};
 
-/* SIDEBAR */
+const fastener={
+full:{
+"M12×30 NB":24,"M12×30 PV":48,"M12×30 SV":24,
+"M10×30 NB":324,"M10×30 PV":472,"M10×30 SV":324,"M10×30 RV":176,
+"M8×25 Bolt":232,"M8×25 Nut":232,"M8×25 RV":232
+},
+half:{
+"M12×30 NB":14,"M12×30 PV":28,"M12×30 SV":14,
+"M10×30 NB":176,"M10×30 PV":264,"M10×30 SV":176,"M10×30 RV":88,
+"M8×25 Bolt":120,"M8×25 Nut":120,"M8×25 RV":120
+}
+};
+
+/* STATE */
+let tableType="full";
+let mode="t2m";
+
+/* NAV */
 function showSection(id,btn){
   document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
@@ -176,36 +141,13 @@ function showSection(id,btn){
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* DATA */
-let tableType="full";
-let mode="t2m";
-
-const mms={
-full:{Rafter:12,Purlin:24,Bracing:12},
-half:{Rafter:7,Purlin:14,Bracing:7}
-};
-
-const fasteners={
-full:{
-"M12 NB":24,"M12 PV":48,"M12 SV":24,
-"M10 NB":324,"M10 PV":472,"M10 SV":324,"M10 RV":176,
-"M8 Bolt":232,"M8 Nut":232,"M8 RV":232
-},
-half:{
-"M12 NB":14,"M12 PV":28,"M12 SV":14,
-"M10 NB":176,"M10 PV":264,"M10 SV":176,"M10 RV":88,
-"M8 Bolt":120,"M8 Nut":120,"M8 RV":120
-}
-};
-
-/* MMS LOGIC */
-function setType(t,btn){
+/* CONTROLS */
+function setTable(t,btn){
   tableType=t;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   renderInputs();
 }
-
 function setMode(m,btn){
   mode=m;
   btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
@@ -213,39 +155,36 @@ function setMode(m,btn){
   renderInputs();
 }
 
+/* INPUT UI */
 function renderInputs(){
-  const d=document.getElementById("inputArea");
-  d.innerHTML="";
+  const d=document.getElementById("inputs");
   if(mode==="t2m"||mode==="t2f"){
-    d.innerHTML=`<input id="count" type="number" placeholder="No. of Tables">`;
+    d.innerHTML=`<input id="qty" type="number" placeholder="No. of Tables">`;
   }else{
-    const data = mode==="m2t"?mms[tableType]:fasteners[tableType];
-    let opt="";
-    for(let k in data) opt+=`<option value="${k}">${k}</option>`;
+    let opt="",src=(mode==="m2t"?material:fastener);
+    for(let k in src[tableType]) opt+=`<option>${k}</option>`;
     d.innerHTML=`<select id="item">${opt}</select>
-                 <input id="count" type="number" placeholder="Quantity">`;
+                 <input id="qty" type="number" placeholder="Quantity">`;
   }
 }
-
 renderInputs();
 
+/* CALC */
 function calculate(){
-  const n=+document.getElementById("count").value;
-  if(!n) return alert("Enter value");
+  const q=+qty.value;
+  if(!q) return alert("Enter value");
   let out="";
   if(mode==="t2m"){
-    for(let k in mms[tableType]) out+=`${k}: ${mms[tableType][k]*n}<br>`;
-  }
-  if(mode==="t2f"){
-    for(let k in fasteners[tableType]) out+=`${k}: ${fasteners[tableType][k]*n}<br>`;
+    for(let k in material[tableType]) out+=`${k}: ${material[tableType][k]*q}<br>`;
   }
   if(mode==="m2t"){
-    const i=document.getElementById("item").value;
-    out="Tables possible: "+Math.floor(n/mms[tableType][i]);
+    out="Tables possible: "+Math.floor(q/material[tableType][item.value]);
+  }
+  if(mode==="t2f"){
+    for(let k in fastener[tableType]) out+=`${k}: ${fastener[tableType][k]*q}<br>`;
   }
   if(mode==="f2t"){
-    const i=document.getElementById("item").value;
-    out="Tables possible: "+Math.floor(n/fasteners[tableType][i]);
+    out="Tables possible: "+Math.floor(q/fastener[tableType][item.value]);
   }
   result.innerHTML=out;
 }
