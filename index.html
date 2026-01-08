@@ -233,18 +233,45 @@ function showSection(id,btn){
 
 /* MODULE CALC */
 function calcMixedModules(){
-  const full=+fullTables.value||0;
-  const half=+halfTables.value||0;
-  if(!full&&!half) return alert("Enter table count");
+  const full = +fullTables.value || 0;
+  const half = +halfTables.value || 0;
 
-  const modules=(full*58)+(half*29);
-  const pallets=Math.ceil(modules/33);
+  if(!full && !half){
+    alert("Enter table count");
+    return;
+  }
 
-  moduleResult.innerHTML=`
+  // Full table calculation
+  const fullPallets = full * 2;
+  let leftoverModules = full * 8;
+
+  // Half table requirement
+  let halfModulesNeeded = half * 29;
+
+  // Use leftover modules first
+  if(leftoverModules >= halfModulesNeeded){
+    leftoverModules = leftoverModules - halfModulesNeeded;
+    halfModulesNeeded = 0;
+  } else {
+    halfModulesNeeded -= leftoverModules;
+    leftoverModules = 0;
+  }
+
+  // Extra pallets for remaining half tables
+  let extraPallets = 0;
+  if(halfModulesNeeded > 0){
+    extraPallets = Math.ceil(halfModulesNeeded / 33);
+    leftoverModules = (extraPallets * 33) - halfModulesNeeded;
+  }
+
+  const totalPallets = fullPallets + extraPallets;
+
+  moduleResult.innerHTML = `
     Full Tables: ${full}<br>
     Half Tables: ${half}<br><br>
-    <b>Total Modules:</b> ${modules}<br>
-    <b>Pallets Required:</b> ${pallets}
+
+    <b>Total Pallets Required:</b> ${totalPallets}<br>
+    <b>Modules Leftover:</b> ${leftoverModules}
   `;
 }
 </script>
