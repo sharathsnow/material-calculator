@@ -293,8 +293,16 @@ Last Updated: 08-Jan-2026
 </div>
 
 <!-- MODULE -->
+<<!-- MODULE -->
 <div id="module" class="box hidden">
-  <p>Module calculations can be added here.</p>
+  <h3>Module → Pallet (Internal Shifting)</h3>
+
+  <input id="fullTablesMod" type="number" placeholder="No. of Full Tables">
+  <input id="halfTablesMod" type="number" placeholder="No. of Half Tables">
+
+  <button class="calculate-btn" onclick="calcModulePallet()">Calculate</button>
+
+  <div id="moduleResult" class="output"></div>
 </div>
 
 </div>
@@ -416,6 +424,29 @@ function calcPiling(){
   const p=pileType==="full"?12:7;
   pileResult.innerHTML="Column Posts Required: "+(n*p);
 }
+
+function calcModulePallet(){
+  const full = +document.getElementById("fullTablesMod").value || 0;
+  const half = +document.getElementById("halfTablesMod").value || 0;
+
+  const modules =
+    (full * 58) +
+    (half * 29);
+
+  if(modules === 0){
+    alert("Enter Full or Half table count");
+    return;
+  }
+
+  const pallets = Math.ceil(modules / 33);
+  const left = (pallets * 33) - modules;
+
+  document.getElementById("moduleResult").innerHTML =
+    `Total Modules Required: <b>${modules}</b><br>
+     Pallets to Open: <b>${pallets}</b><br>
+     Modules Left for Shifting: <b>${left}</b>`;
+}
+
 </script>
 
 </body>
