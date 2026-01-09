@@ -293,25 +293,23 @@ Last Updated: 08-Jan-2026
 </div>
 
 <!-- MODULE -->
-<<!-- MODULE -->
+<!-- MODULE -->
 <div id="module" class="box hidden">
-  <h3>Module → Pallet (Internal Shifting)</h3>
+  <h3>Module → Pallet Planning</h3>
 
-<div style="margin-bottom:10px">
-  <label><b>Full Tables</b></label>
-  <input type="number" id="fullTables">
-</div>
+  <div style="margin-bottom:10px">
+    <label><b>Full Tables</b></label>
+    <input type="number" id="fullTableCount" value="0">
+  </div>
 
-<div style="margin-bottom:10px">
-  <label><b>Half Tables</b></label>
-  <input type="number" id="halfTables">
-</div>
+  <div style="margin-bottom:10px">
+    <label><b>Half Tables</b></label>
+    <input type="number" id="halfTableCount" value="0">
+  </div>
 
-  <button class="calculate-btn" onclick="calcModulePallet()">Calculate</button>
+  <button class="calculate-btn" onclick="calcPallets()">Calculate</button>
 
   <div id="moduleResult" class="output"></div>
-</div>
-
 </div>
 </div>
 
@@ -432,26 +430,29 @@ function calcPiling(){
   pileResult.innerHTML="Column Posts Required: "+(n*p);
 }
 
-function calcModulePallet(){
-  const full = +document.getElementById("fullTablesMod").value || 0;
-  const half = +document.getElementById("halfTablesMod").value || 0;
+function calcPallets(){
+  const full = Number(document.getElementById("fullTableCount").value) || 0;
+  const half = Number(document.getElementById("halfTableCount").value) || 0;
 
-  const modules =
-    (full * 58) +
-    (half * 29);
+  const MODULES_PER_PALLET = 33;
+  const FULL_TABLE_MODULES = 58;
+  const HALF_TABLE_MODULES = 29;
 
-  if(modules === 0){
-    alert("Enter Full or Half table count");
-    return;
-  }
+  const fullModules = full * FULL_TABLE_MODULES;
+  const halfModules = half * HALF_TABLE_MODULES;
 
-  const pallets = Math.ceil(modules / 33);
-  const left = (pallets * 33) - modules;
+  const totalModules = fullModules + halfModules;
 
-  document.getElementById("moduleResult").innerHTML =
-    `Total Modules Required: <b>${modules}</b><br>
-     Pallets to Open: <b>${pallets}</b><br>
-     Modules Left for Shifting: <b>${left}</b>`;
+  const pallets = Math.floor(totalModules / MODULES_PER_PALLET);
+  const leftover = totalModules % MODULES_PER_PALLET;
+
+  document.getElementById("moduleResult").innerHTML = `
+    <b>Full Tables:</b> ${full} → ${fullModules} modules<br>
+    <b>Half Tables:</b> ${half} → ${halfModules} modules<br><br>
+    <b>Total Modules Fixed:</b> ${totalModules}<br>
+    <b>Pallets Required:</b> ${pallets}<br>
+    <b>Modules Left Over:</b> ${leftover}
+  `;
 }
 
 </script>
