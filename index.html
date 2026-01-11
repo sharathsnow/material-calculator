@@ -428,7 +428,7 @@ function calcPiling(){
   const n=+pileTables.value;if(!n)return alert("Enter tables");
   const p=pileType==="full"?12:7;
   pileResult.innerHTML="Column Posts Required: "+(n*p);
-}
+} 
 
 function calcPallets(){
   const full = Number(document.getElementById("fullTableCount").value) || 0;
@@ -443,9 +443,9 @@ function calcPallets(){
 
   const totalModules = fullModules + halfModules;
 
-  const pallets = Math.floor(totalModules / MODULES_PER_PALLET);
-  const leftover = totalModules % MODULES_PER_PALLET;
-
+  const pallets = Math.ceil(totalModules / MODULES_PER_PALLET);
+  const leftover = (pallets * MODULES_PER_PALLET) - totalModules;
+  
   document.getElementById("moduleResult").innerHTML = `
     <b>Full Tables:</b> ${full} → ${fullModules} modules<br>
     <b>Half Tables:</b> ${half} → ${halfModules} modules<br><br>
